@@ -550,7 +550,7 @@ Int_t StPicoDstarMixedMaker::Make()
   // -------------- USER ANALYSIS -------------------------
   StPicoEvent const * picoEvent = picoDst->event();
   //trigger
-  UInt_t good_pri = 0;
+  // UInt_t good_pri = 0;
 
   //if (!isGoodTrigger(picoEvent)) return 0;    
   mRunId = picoEvent->runId();
@@ -827,7 +827,7 @@ Int_t StPicoDstarMixedMaker::Make()
       bool goodtrack = isGoodTrack(trk,trk->gDCA(mVx,mVy,mVz));
       if (!goodtrack) continue;
       if (!isprimary) continue;
-      good_pri++;
+      // good_pri++;
       
       if(QA){
       hpDca->Fill(trk->gDCA(mVx,mVy,mVz));
@@ -916,7 +916,7 @@ Int_t StPicoDstarMixedMaker::Make()
       if (mom.Mag()>0.8) isTPCElectron =  trk->nSigmaElectron()<2 && trk->nSigmaElectron()>-0.75;
       else isTPCElectron = trk->nSigmaElectron()<2 && trk->nSigmaElectron()>(3*mom.Mag()-3.15);
       bool isTOFElectron = tofmatch?fabs(1./beta-1.)<0.025:false;
-        
+
       if(QA)h_nSigmaElectron_P_tpc->Fill(mom.Mag(),trk->nSigmaElectron());      
 
       // --- Pion ---
@@ -1177,7 +1177,7 @@ Int_t StPicoDstarMixedMaker::Make()
   } //Good Event
  }
   if(DEBUG) cout<<"end make"<<endl;
-  cout << good_pri << endl;
+  // cout << good_pri << endl;
   return kStOK;
 }
 bool StPicoDstarMixedMaker::isGoodTrigger(StPicoEvent const* const picoEvent) const

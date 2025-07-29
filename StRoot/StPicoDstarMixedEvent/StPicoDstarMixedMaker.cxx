@@ -535,9 +535,6 @@ mFile->cd();
 Int_t StPicoDstarMixedMaker::Make()
 {
   if(DEBUG) cout<<"star make"<<endl;
-  ParticleInfo_Electron particleinfo;
-  vector<ParticleInfo_Electron> electroninfo;
-  vector<ParticleInfo_Electron> positroninfo;
   // StMemStat mem;
   if (!mPicoDstMaker)
   {
@@ -770,6 +767,10 @@ Int_t StPicoDstarMixedMaker::Make()
   if (QA && passCentralityCut) hrefmult->Fill(picoEvent->refMult());
   if (QA && passCentralityCut) hrefmult_Pos->Fill(picoEvent->refMultPos());
   if (QA && passCentralityCut) hrefmult_Neg->Fill(picoEvent->refMultNeg());
+  ParticleInfo_Electron particleinfo;
+  vector<ParticleInfo_Electron> electroninfo;
+  vector<ParticleInfo_Electron> positroninfo;
+
   if (isGoodEvent(picoEvent)){
     // StThreeVectorF pVtx = picoEvent->primaryVertex();
     
@@ -802,8 +803,6 @@ Int_t StPicoDstarMixedMaker::Make()
     
     electroninfo.clear();
     positroninfo.clear();  
-  
-
     int nTracks = picoDst->numberOfTracks();
     for (int itrack=0;itrack<nTracks;itrack++){
       StPicoTrack* trk = picoDst->track(itrack);

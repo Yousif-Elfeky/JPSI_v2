@@ -49,11 +49,14 @@ Int_t StPicoDstarMixedMaker::Init()
 {
   mOutFileBaseName = mOutFileBaseName.ReplaceAll(".root", "");
   // -------------- USER VARIABLES -------------------------
-  mFile = new TFile(mOutFileBaseName+".QA.root", "RECREATE");
+  mFile = new TFile(mOutFileBaseName+".root", "RECREATE");
   //mFile_RunID = new TFile(mOutFileBaseName+".RunID.root","RECREATE");
   //initialize trees
   initHists();
-
+  if (!hMeeCount) {
+    LOG_ERROR << "hMeeCount histogram was not initialized. Aborting." << endm;
+    return kStFatal; // kStFatal will stop the entire chain.
+  }
   return kStOK;
 }
 //-----------------------------------------------------------------------------
@@ -551,6 +554,9 @@ Int_t StPicoDstarMixedMaker::Make()
   StPicoEvent const * picoEvent = picoDst->event();
   //trigger
   // UInt_t good_pri = 0;
+  ParticleInfo_Electron particleinfo;
+  vector<ParticleInfo_Electron> electroninfo;
+  vector<ParticleInfo_Electron> positroninfo;
 
   //if (!isGoodTrigger(picoEvent)) return 0;    
   mRunId = picoEvent->runId();
@@ -767,9 +773,6 @@ Int_t StPicoDstarMixedMaker::Make()
   if (QA && passCentralityCut) hrefmult->Fill(picoEvent->refMult());
   if (QA && passCentralityCut) hrefmult_Pos->Fill(picoEvent->refMultPos());
   if (QA && passCentralityCut) hrefmult_Neg->Fill(picoEvent->refMultNeg());
-  ParticleInfo_Electron particleinfo;
-  vector<ParticleInfo_Electron> electroninfo;
-  vector<ParticleInfo_Electron> positroninfo;
 
   if (isGoodEvent(picoEvent)){
     // StThreeVectorF pVtx = picoEvent->primaryVertex();

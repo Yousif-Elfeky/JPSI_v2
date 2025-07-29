@@ -321,14 +321,23 @@ void StPicoDstarMixedMaker::initHists(){
     hCos_v2_ac = new TH2F("hCos_v2_ac", "cos(2(#Psi_{a}-#Psi_{c})) vs Centrality;Centrality;cos(2#Delta#Psi_{ac})", 9, -0.5, 8.5, 200, -1.05, 1.05);
     hCos_v2_bc = new TH2F("hCos_v2_bc", "cos(2(#Psi_{b}-#Psi_{c})) vs Centrality;Centrality;cos(2#Delta#Psi_{bc})", 9, -0.5, 8.5, 200, -1.05, 1.05);
 
-    int    bins[4]    = {  9,   25,  150,   20};
-    double xmin[4]    = {-0.5, 0.0, 2.80,  0.0};
-    double xmax_v2[4] = {9.0, 10.0, 2.00, TMath::Pi()};
+    const int nDimensions = 4;
+    
+    // Number of bins for each dimension
+    int bins[nDimensions] = { 9, 25, 150, 20 };
+    
+    // Minimum value for each dimension's axis
+    double xmin[nDimensions] = { -0.5, 0.0, 0.0, 0.0 };
+    
+    // Maximum value for each dimension's axis
+    double xmax[nDimensions] = { 8.5, 5.0, 4.0, TMath::Pi() }; 
+    
     const char* axisTitles = ";Centrality;p_{T} (GeV/c);Mass (GeV/c^{2});#Delta#phi_{2}";
 
-    hJpsi_v2_UL     = new THnSparseF("hJpsi_v2_UL",     TString("Unlike-sign ") + axisTitles, 4, bins, xmin, xmax_v2);
-    hJpsi_v2_LSpp   = new THnSparseF("hJpsi_v2_LSpp",   TString("Like-sign e+e+ ") + axisTitles, 4, bins, xmin, xmax_v2);
-    hJpsi_v2_LSnn   = new THnSparseF("hJpsi_v2_LSnn",   TString("Like-sign e-e- ") + axisTitles, 4, bins, xmin, xmax_v2);
+    // Now, create the histograms using these clear definitions
+    hJpsi_v2_UL   = new THnSparseF("hJpsi_v2_UL",   TString("Unlike-sign ") + axisTitles, nDimensions, bins, xmin, xmax);
+    hJpsi_v2_LSpp = new THnSparseF("hJpsi_v2_LSpp", TString("Like-sign e+e+ ") + axisTitles, nDimensions, bins, xmin, xmax);
+    hJpsi_v2_LSnn = new THnSparseF("hJpsi_v2_LSnn", TString("Like-sign e-e- ") + axisTitles, nDimensions, bins, xmin, xmax);
 
     hJpsi_v2_UL->Sumw2(); hJpsi_v2_LSpp->Sumw2(); hJpsi_v2_LSnn->Sumw2();
 

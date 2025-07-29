@@ -26,7 +26,8 @@ void runPicoDstarMixedEvent(TString picolist="input.list", std::string  runlist=
   StPicoDstarMixedMaker*  picoDstarMixedMaker = new StPicoDstarMixedMaker("picoDstarMixedMaker",picolist , outFileName.Data(), picoDstMaker);
   picoDstarMixedMaker->setRunNumList(runlist);
   picoDstarMixedMaker->getBadruns("StRoot/macros/badRun.list");
-  picoDstarMixedMaker->setRunbyRunQA(true);
+  picoDstarMixedMaker->setRunbyRunQA(false);
+  picoDstarMixedMaker->setQA(false);
   // -------------- USER variables -------------------------
   chain->Init();
   int nEntries = picoDstMaker->chain()->GetEntries();

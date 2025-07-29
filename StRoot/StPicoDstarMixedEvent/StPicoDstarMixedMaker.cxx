@@ -763,7 +763,7 @@ Int_t StPicoDstarMixedMaker::Make()
   if (QA && vzcut) hpassevtcut->Fill(2);
   if (QA && vzcut &&  vrcut) hpassevtcut->Fill(3);
   // if (vzcut && vrcut  &&  vpdvzcut ) hpassevtcut->Fill(4);
-  if (vzcut && vrcut  &&  vpdvzcut && verrcut ) hpassevtcut->Fill(4);
+  if (QA && vzcut && vrcut  &&  vpdvzcut && verrcut ) hpassevtcut->Fill(4);
   bool refusepileup = picoEvent->refMult()<picoEvent->btofTrayMultiplicity()*0.36+45;
   bool refusebadtof = picoEvent->refMult()>picoEvent->btofTrayMultiplicity()*0.28-115;
   bool passCentralityCut = refusepileup && refusebadtof  && verrcut && vrcut && fabs(pVtx.z()) < 10; 

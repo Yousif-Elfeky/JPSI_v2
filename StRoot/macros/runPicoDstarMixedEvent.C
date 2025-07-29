@@ -1,7 +1,7 @@
 #include <string>
 #include <fstream>
 void load();
-void runPicoDstarMixedEvent(TString picolist="try.list", std::string  runlist="run.list" , TString outFileName="test")
+void runPicoDstarMixedEvent(TString picolist="input.list", std::string  runlist="run.list" , TString outFileName="test")
 {
   TStopwatch*   stopWatch = new TStopwatch();
   stopWatch->Start();

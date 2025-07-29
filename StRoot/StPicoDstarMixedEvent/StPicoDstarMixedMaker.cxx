@@ -782,25 +782,25 @@ Int_t StPicoDstarMixedMaker::Make()
 
   if(DEBUG) cout<<"star event QA"<<endl;
   TVector3 pVtx = picoEvent->primaryVertex();
-  if(QA){
+  
     mVx = pVtx.x();
     mVy = pVtx.y();
     mVz = pVtx.z();
-    h_Vx_Vy->Fill(mVx,mVy);
     mVpdVz = picoEvent->vzVpd();
-    hevtcut->Fill(runnum[mRunId]);
-    hVz->Fill(mVz);
-    hVpdVz->Fill(mVpdVz);
-    hVxVyVz->Fill(mVx,mVy,mVz);
-    hVr->Fill(sqrt(mVy*mVy+mVx*mVx));
-    hVzVpdVz->Fill(mVpdVz-mVz);
-    h_Vz_VpdVz->Fill(mVz,mVpdVz);  
+    if(QA)h_Vx_Vy->Fill(mVx,mVy);
+    if(QA)hevtcut->Fill(runnum[mRunId]);
+    if(QA)hVz->Fill(mVz);
+    if(QA)hVpdVz->Fill(mVpdVz);
+    if(QA)hVxVyVz->Fill(mVx,mVy,mVz);
+    if(QA)hVr->Fill(sqrt(mVy*mVy+mVx*mVx));
+    if(QA)hVzVpdVz->Fill(mVpdVz-mVz);
+    if(QA)h_Vz_VpdVz->Fill(mVz,mVpdVz);  
 
-    hnTofMult->Fill(picoEvent->btofTrayMultiplicity());  
-    hnTofMulvsRef->Fill(picoEvent->refMult(),picoEvent->btofTrayMultiplicity());  
-    hnTofMatch->Fill(picoEvent->nBTOFMatch());  
-    hnTofMatvsRef->Fill(picoEvent->refMult(),picoEvent->nBTOFMatch());  
-  }
+    if(QA)hnTofMult->Fill(picoEvent->btofTrayMultiplicity());  
+    if(QA)hnTofMulvsRef->Fill(picoEvent->refMult(),picoEvent->btofTrayMultiplicity());  
+    if(QA)hnTofMatch->Fill(picoEvent->nBTOFMatch());  
+    if(QA)hnTofMatvsRef->Fill(picoEvent->refMult(),picoEvent->nBTOFMatch());  
+
     double ntofhits = 0;
     //    int ntrack_tof_hits =0; 
     

@@ -75,7 +75,7 @@ class StPicoDstarMixedMaker : public StMaker
     bool isGoodTrack(StPicoTrack const* trk,float dca) const;
     float getTofBeta(StPicoTrack const* const trk) const;
     void getQVectors(StPicoDst const*, TVector2 Q[3], int n) const;
-    float calcEventPlane(StPicoDst const* const picoDst, StPicoEvent const* picoEvent, const int n) const;
+    // float calcEventPlane(StPicoDst const* const picoDst, StPicoEvent const* picoEvent, const int n) const;
     TVector2 QEtaGap(int iEta, int nEtaGaps) const;
     StPicoDstMaker* mPicoDstMaker;
     StRefMultCorr* refmultCorrUtil;

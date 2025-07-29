@@ -832,7 +832,7 @@ Int_t StPicoDstarMixedMaker::Make()
     hCos_v2_ac->Fill(mCent, cos(2. * (mEventPlaneV2[0].Phi() - mEventPlaneV2[2].Phi())), weight);
     hCos_v2_bc->Fill(mCent, cos(2. * (mEventPlaneV2[1].Phi() - mEventPlaneV2[2].Phi())), weight);
     
-	float eventPlane = calcEventPlane(picoDst, picoEvent, 2);
+	// float eventPlane = calcEventPlane(picoDst, picoEvent, 2);
 
   if(DEBUG) cout<<"star event QA"<<endl;
   TVector3 pVtx = picoEvent->primaryVertex();

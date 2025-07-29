@@ -916,7 +916,7 @@ Int_t StPicoDstarMixedMaker::Make()
       if (mom.Mag()>0.8) isTPCElectron =  trk->nSigmaElectron()<2 && trk->nSigmaElectron()>-0.75;
       else isTPCElectron = trk->nSigmaElectron()<2 && trk->nSigmaElectron()>(3*mom.Mag()-3.15);
       bool isTOFElectron = tofmatch?fabs(1./beta-1.)<0.025:false;
-  
+        
       if(QA)h_nSigmaElectron_P_tpc->Fill(mom.Mag(),trk->nSigmaElectron());      
 
       // --- Pion ---

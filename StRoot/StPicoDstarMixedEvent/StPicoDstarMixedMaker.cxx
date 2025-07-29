@@ -755,9 +755,9 @@ Int_t StPicoDstarMixedMaker::Make()
   } //runbyrun QA 
 
   //event and track level QA
-  hpassevtcut->Fill(0);
+  if(QA)hpassevtcut->Fill(0);
   if (!isBadrun(mRunId)){
-  hpassevtcut->Fill(1); //bad run list
+  if(QA)hpassevtcut->Fill(1); //bad run list
   // bool vzcut = fabs(pVtx.z()) < 30;
   bool vzcut = fabs(pVtx.z()) < 60;
   bool verrcut = !(fabs(pVtx.x()) < anaCuts::Verror && fabs(pVtx.y()) < anaCuts::Verror && fabs(pVtx.z()) < anaCuts::Verror);

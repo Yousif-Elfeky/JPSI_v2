@@ -999,7 +999,13 @@ Int_t StPicoDstarMixedMaker::Make()
             particleinfo.p1 = mom.X();
             particleinfo.p2 = mom.Y();
             particleinfo.p3 = mom.Z();
+            std::cout << "DEBUG: Event " << picoEvent->eventId() << ", Track " << itrack
+              << ", pT = " << particleinfo.pt << ", eta = " << particleinfo.eta
+              << ", nSigmaPi = " << particleinfo.nSigmaPi << std::endl;
+            std::cout << "DEBUG: Positron vector size before push_back: " << positroninfo.size() << std::endl;
             positroninfo.push_back(particleinfo);
+            std::cout << "DEBUG: Successfully pushed back positron." << std::endl;
+
             // cout<<"debug02"<<endl;
              /*current_ePlus[current_nEPlus].SetPx(mom.x());
              current_ePlus[current_nEPlus].SetPy(mom.y());

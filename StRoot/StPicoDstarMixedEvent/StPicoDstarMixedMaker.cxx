@@ -601,10 +601,6 @@ Int_t StPicoDstarMixedMaker::Make()
     //track level 
     
 
-    electroninfo.clear();
-    positroninfo.clear();  
-  
-
 
     int nTracks = picoDst->numberOfTracks();
     //if (DEBUG)  cout << nTracks <<endl;
@@ -803,6 +799,11 @@ Int_t StPicoDstarMixedMaker::Make()
   }
     double ntofhits = 0;
     //    int ntrack_tof_hits =0; 
+    
+    electroninfo.clear();
+    positroninfo.clear();  
+  
+
     int nTracks = picoDst->numberOfTracks();
     for (int itrack=0;itrack<nTracks;itrack++){
       StPicoTrack* trk = picoDst->track(itrack);

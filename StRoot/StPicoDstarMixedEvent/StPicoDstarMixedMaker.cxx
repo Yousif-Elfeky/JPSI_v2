@@ -1052,7 +1052,7 @@ Int_t StPicoDstarMixedMaker::Make()
         if(1.0/beta>1.13 && 1.0/beta<1.24 && mom.Mag()>0.3 && mom.Mag()<0.5)
          {
             int tofid = tofPid->btofCellId();
-            TofId->Fill(tofid);
+            if(QA)TofId->Fill(tofid);
             if(QA)TofId_nSigmaPi->Fill(trk->nSigmaPion());
             //TrayId_1->Fill(tofid/192+1);
             //ModuleId_1->Fill((tofid%192)/6+1);

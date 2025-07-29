@@ -89,86 +89,86 @@ void StPicoDstarMixedMaker::initHists(){
   //int totalNum = 32; //temp
   
   //char name_RunID[100];
-ifstream readnum;
-readnum.open(mRunNumList);
+  ifstream readnum;
+  readnum.open(mRunNumList);
 
-if (!readnum.is_open()) {
-  cout << "Error: Could not open run number list file: " << mRunNumList << endl;
-  return; 
-}
-
-int totalNum = 0; 
-
-if (mRunbyRunQA) {
-  cout << "Starting to initial run numbers..." << endl;
-
-  int tmpRunNum; 
-  int index = 0; 
-
-  while (readnum >> tmpRunNum) {
-    runnum.insert(pair<int, int>(tmpRunNum, index));
-    if (DEBUG) cout << "Read run number: " << tmpRunNum << " -> assigned id: " << index << endl;
-    index++;
+  if (!readnum.is_open()) {
+    cout << "Error: Could not open run number list file: " << mRunNumList << endl;
+    return; 
   }
-  readnum.close();
 
-  // <<< UPDATE IT HERE. Now we are setting the value of the outer variable.
-  totalNum = runnum.size();
-  if(DEBUG) cout << "Successfully read " << totalNum << " run numbers in total." << endl;
-}
+  int totalNum = 0; 
+  if(QA){
+    if (mRunbyRunQA) {
+      cout << "Starting to initial run numbers..." << endl;
 
-  // event level QA
-  hevt = new TH1D("hevt","hevt",totalNum,0,totalNum);
-  hevtcut = new TH1D("hevtcut","hevtcut",totalNum,0,totalNum);
-  hevtbadcut = new TH1D("hevtbadcut","Events after remove bad run;Run;Counts",totalNum,0,totalNum);
-  hpassevtcut = new TH1D("hpassevtcut","pass event cut", 6, -0.5 , 5.5 );
-  //run by run QA
-  if (mRunbyRunQA){ 
-    pVpdVz = new TProfile("VpdVz","VpdVz vs runId;runId;VpdVz(cm)",totalNum,0,totalNum);
-    pVzVpdVz = new TProfile("VzVpdVz","VzVpdVz vs runId;runId;VpdVz-Vz(cm)",totalNum,0,totalNum);
-    pRefmult = new TProfile("Refmult","Refmult vs runId;runId;Refmult",totalNum,0,totalNum);
-    pVpdHitEast = new TProfile("pVpdHitEast","pVpdHitEast;runId;pVpdHitEast",totalNum,0,totalNum);
-    pVpdHitWest = new TProfile("pVpdHitWest","pVpdHitWest;runId;pVpdHitWest",totalNum,0,totalNum);
-    pVz  = new TProfile("pVz","pVz;runId;pVz(cm)",totalNum,0,totalNum);
-    pVx = new TProfile("pVx","pVx;runId;pVx(cm)",totalNum,0,totalNum);
-    pVy = new TProfile("pVy","pVy;runId;pVy(cm)",totalNum,0,totalNum);
-    pVr = new TProfile("pVr","pVr;runId;pVr(cm)",totalNum,0,totalNum);
-    
-    //track level QA
-    pTof = new TProfile("Tof","1/#beta vs runId;runId;1/#beta",totalNum,0,totalNum);
-    pDedx = new TProfile("Dedx","dEdx vs runId;runId;dEdx",totalNum,0,totalNum);
-    //pRMSDedx = new TProfile("RMSDedx","RMSdEdx vs runId;runId;RMSdEdx",totalNum,0,totalNum);
-    pgDCA = new TProfile("gDCA","gDCA vs runId;runId;global DCA(cm)",totalNum,0,totalNum);
-    ppDCA = new TProfile("pDCA","pDCA vs runId;runId;primary DCA(cm)",totalNum,0,totalNum);
-    pgPt = new TProfile("gPt","global Pt vs runId;runId;global p_{T}(GeV/c)",totalNum,0,totalNum);
-    pgPhi = new TProfile("gPhi","global Phi vs runId;runId;gPhi",totalNum,0,totalNum);
-    pgEta = new TProfile("gEta","global Eta vs runId;runId;Eta",totalNum,0,totalNum);
-    pNFits = new TProfile("NFits","NHitsFit vs runId;runId;nHitsFit",totalNum,0,totalNum);
-    ppPt = new TProfile("pPt","primary Pt vs runId;runId;primary p_{T}(GeV/c)",totalNum,0,totalNum);
-    ppEta = new TProfile("pEta","primary Eta vs runId;runId;pEta",totalNum,0,totalNum);
-    ppPhi = new TProfile("pPhi","primary Phi vs runId;runId;pPhi",totalNum,0,totalNum);
-    p_nSigmaE = new TProfile("p_nSigmaE","primary nSigmaE vs runId;runId;n#sigma_{e}",totalNum,0,totalNum);
-    p_nSigmaPion = new TProfile("p_nSigmaPion","primary nSigmaPion vs runId;runId;n#sigma_{#pi}",totalNum,0,totalNum);
-    p_nSigmaKaon = new TProfile("p_nSigmaKaon","primary nSigmaKaon vs runId;runId;n#sigma_{K}",totalNum,0,totalNum);
-    p_nSigmaProton = new TProfile("p_nSigmaProton","primary nSigmaProton vs runId;runId;n#sigma_{p}",totalNum,0,totalNum);
-    p_nTofMatch = new TProfile("p_nTofMatch","nTofMatch vs runId;runId;nTofMatch",totalNum,0,totalNum);
-    
-    p_nSigmaTofE = new TProfile("p_nSigmaTofE","primary nSigmaTofE vs runId;runId;nSigmaTof_{e}",totalNum,0,totalNum);
-    p_nSigmaTofPion = new TProfile("p_nSigmaTofPion","primary nSigmaTofPion vs runId;runId;nSigmaTof_{#pi}",totalNum,0,totalNum);
-    p_nSigmaTofKaon = new TProfile("p_nSigmaTofKaon","primary nSigmaTofKaon vs runId;runId;nSigmaTof_{K}",totalNum,0,totalNum);
-    p_nSigmaTofProton = new TProfile("p_nSigmaTofProton","primary nSigmaTofProton vs runId;runId;nSigmaTof_{p}",totalNum,0,totalNum);
-    p_btofYLocal = new TProfile("p_btofYLocal","btofYLocal vs runId;runId;btofYLocal",totalNum,0,totalNum);
-    p_btofZLocal = new TProfile("p_btofZLocal","btofZLocal vs runId;runId;btofZLocal",totalNum,0,totalNum);
+      int tmpRunNum; 
+      int index = 0; 
 
-    p_nETofHits = new TProfile("p_nETofHits","ETof Hits vs runId;runId;nETofHits",totalNum,0,totalNum);
-    p_nBemcPidTraits = new TProfile("p_nBemcPidTraits","nBemcPidTraits vs runId;runId;nBemcPidTraits",totalNum,0,totalNum);
-    p_nMtdHits = new TProfile("p_nMtdHits","nMtdHits vs runId;runId;nMtdHits",totalNum,0,totalNum);
-    p_nMtdPidTraits = new TProfile("p_nMtdPidTraits","nMtdPidTraits vs runId;runId;nMtdPidTraits",totalNum,0,totalNum);
-    p_ETof_beta = new TProfile("p_ETof_beta","ETof beta vs runId;runId;1/beta(ETof)",totalNum,0,totalNum);
-    p_ETof_deltaX = new TProfile("p_ETof_deltaX","ETof delta X vs runId;runId;#Delta X (ETof)",totalNum,0,totalNum);
-    p_ETof_deltaY = new TProfile("p_ETof_deltaY","ETof delta Y vs runId;runId;#Delta Y (ETof)",totalNum,0,totalNum);
-  }
-   //event QA
+      while (readnum >> tmpRunNum) {
+        runnum.insert(pair<int, int>(tmpRunNum, index));
+        if (DEBUG) cout << "Read run number: " << tmpRunNum << " -> assigned id: " << index << endl;
+        index++;
+      }
+      readnum.close();
+
+      // <<< UPDATE IT HERE. Now we are setting the value of the outer variable.
+      totalNum = runnum.size();
+      if(DEBUG) cout << "Successfully read " << totalNum << " run numbers in total." << endl;
+    }
+
+    // event level QA
+    hevt = new TH1D("hevt","hevt",totalNum,0,totalNum);
+    hevtcut = new TH1D("hevtcut","hevtcut",totalNum,0,totalNum);
+    hevtbadcut = new TH1D("hevtbadcut","Events after remove bad run;Run;Counts",totalNum,0,totalNum);
+    hpassevtcut = new TH1D("hpassevtcut","pass event cut", 6, -0.5 , 5.5 );
+    //run by run QA
+    if (mRunbyRunQA){ 
+      pVpdVz = new TProfile("VpdVz","VpdVz vs runId;runId;VpdVz(cm)",totalNum,0,totalNum);
+      pVzVpdVz = new TProfile("VzVpdVz","VzVpdVz vs runId;runId;VpdVz-Vz(cm)",totalNum,0,totalNum);
+      pRefmult = new TProfile("Refmult","Refmult vs runId;runId;Refmult",totalNum,0,totalNum);
+      pVpdHitEast = new TProfile("pVpdHitEast","pVpdHitEast;runId;pVpdHitEast",totalNum,0,totalNum);
+      pVpdHitWest = new TProfile("pVpdHitWest","pVpdHitWest;runId;pVpdHitWest",totalNum,0,totalNum);
+      pVz  = new TProfile("pVz","pVz;runId;pVz(cm)",totalNum,0,totalNum);
+      pVx = new TProfile("pVx","pVx;runId;pVx(cm)",totalNum,0,totalNum);
+      pVy = new TProfile("pVy","pVy;runId;pVy(cm)",totalNum,0,totalNum);
+      pVr = new TProfile("pVr","pVr;runId;pVr(cm)",totalNum,0,totalNum);
+      
+      //track level QA
+      pTof = new TProfile("Tof","1/#beta vs runId;runId;1/#beta",totalNum,0,totalNum);
+      pDedx = new TProfile("Dedx","dEdx vs runId;runId;dEdx",totalNum,0,totalNum);
+      //pRMSDedx = new TProfile("RMSDedx","RMSdEdx vs runId;runId;RMSdEdx",totalNum,0,totalNum);
+      pgDCA = new TProfile("gDCA","gDCA vs runId;runId;global DCA(cm)",totalNum,0,totalNum);
+      ppDCA = new TProfile("pDCA","pDCA vs runId;runId;primary DCA(cm)",totalNum,0,totalNum);
+      pgPt = new TProfile("gPt","global Pt vs runId;runId;global p_{T}(GeV/c)",totalNum,0,totalNum);
+      pgPhi = new TProfile("gPhi","global Phi vs runId;runId;gPhi",totalNum,0,totalNum);
+      pgEta = new TProfile("gEta","global Eta vs runId;runId;Eta",totalNum,0,totalNum);
+      pNFits = new TProfile("NFits","NHitsFit vs runId;runId;nHitsFit",totalNum,0,totalNum);
+      ppPt = new TProfile("pPt","primary Pt vs runId;runId;primary p_{T}(GeV/c)",totalNum,0,totalNum);
+      ppEta = new TProfile("pEta","primary Eta vs runId;runId;pEta",totalNum,0,totalNum);
+      ppPhi = new TProfile("pPhi","primary Phi vs runId;runId;pPhi",totalNum,0,totalNum);
+      p_nSigmaE = new TProfile("p_nSigmaE","primary nSigmaE vs runId;runId;n#sigma_{e}",totalNum,0,totalNum);
+      p_nSigmaPion = new TProfile("p_nSigmaPion","primary nSigmaPion vs runId;runId;n#sigma_{#pi}",totalNum,0,totalNum);
+      p_nSigmaKaon = new TProfile("p_nSigmaKaon","primary nSigmaKaon vs runId;runId;n#sigma_{K}",totalNum,0,totalNum);
+      p_nSigmaProton = new TProfile("p_nSigmaProton","primary nSigmaProton vs runId;runId;n#sigma_{p}",totalNum,0,totalNum);
+      p_nTofMatch = new TProfile("p_nTofMatch","nTofMatch vs runId;runId;nTofMatch",totalNum,0,totalNum);
+      
+      p_nSigmaTofE = new TProfile("p_nSigmaTofE","primary nSigmaTofE vs runId;runId;nSigmaTof_{e}",totalNum,0,totalNum);
+      p_nSigmaTofPion = new TProfile("p_nSigmaTofPion","primary nSigmaTofPion vs runId;runId;nSigmaTof_{#pi}",totalNum,0,totalNum);
+      p_nSigmaTofKaon = new TProfile("p_nSigmaTofKaon","primary nSigmaTofKaon vs runId;runId;nSigmaTof_{K}",totalNum,0,totalNum);
+      p_nSigmaTofProton = new TProfile("p_nSigmaTofProton","primary nSigmaTofProton vs runId;runId;nSigmaTof_{p}",totalNum,0,totalNum);
+      p_btofYLocal = new TProfile("p_btofYLocal","btofYLocal vs runId;runId;btofYLocal",totalNum,0,totalNum);
+      p_btofZLocal = new TProfile("p_btofZLocal","btofZLocal vs runId;runId;btofZLocal",totalNum,0,totalNum);
+
+      p_nETofHits = new TProfile("p_nETofHits","ETof Hits vs runId;runId;nETofHits",totalNum,0,totalNum);
+      p_nBemcPidTraits = new TProfile("p_nBemcPidTraits","nBemcPidTraits vs runId;runId;nBemcPidTraits",totalNum,0,totalNum);
+      p_nMtdHits = new TProfile("p_nMtdHits","nMtdHits vs runId;runId;nMtdHits",totalNum,0,totalNum);
+      p_nMtdPidTraits = new TProfile("p_nMtdPidTraits","nMtdPidTraits vs runId;runId;nMtdPidTraits",totalNum,0,totalNum);
+      p_ETof_beta = new TProfile("p_ETof_beta","ETof beta vs runId;runId;1/beta(ETof)",totalNum,0,totalNum);
+      p_ETof_deltaX = new TProfile("p_ETof_deltaX","ETof delta X vs runId;runId;#Delta X (ETof)",totalNum,0,totalNum);
+      p_ETof_deltaY = new TProfile("p_ETof_deltaY","ETof delta Y vs runId;runId;#Delta Y (ETof)",totalNum,0,totalNum);
+    }
+    //event QA
     hVxVyVz = new TH3F("hVxVyVz","VxVyVz;Vx(cm);Vy(cm);Vz(cm)",100,-0.5,0.5,100,-0.5,0.5,240,-60,60);
     hVz = new TH1F("hVz","Vz;Vz(cm);Counts",800,-200,200);
     hVpdVz = new TH1F("hVpdVz","VpdVz;VpdVz(cm);Counts",800,-200,200);
@@ -244,16 +244,6 @@ if (mRunbyRunQA) {
     h_EtavsPhi_Neg = new TH2F("h_EtavsPhi_Neg","Negative Tracks #eta vs #phi;#eta;#phi",60,-1.5,1.5,160,-4,4);
     hBadTofId = new TH3F("hBadTofId","hBadTofId;tray;module;cell",125,-0.5,124.5,33,-0.5,32.5,7,-0.5,6.5);
 
-    //invariant mass electron
-    //hMeeCount = new TH1F("hMee","hMee;Count;Mee(GeV/c^{2})",400,0,4);
-    hMeeCount = new TH1F("hMee","hMee;Mee(GeV/c^{2})",40000,0,4);
-    hMeeCount_like1 = new TH1F("hMee_like1","hMee like sign electron;Mee(GeV/c^{2})",40000,0,4);
-    hMeeCount_like2 = new TH1F("hMee_like2","hMee like sign positron;Mee(GeV/c^{2})",40000,0,4);
-    hMeeCountPt = new TH2F("hMeePt","hMee vs p_{T};Mee(GeV/c^{2});p_{T}",40000,0,4,200,0,10);
-    hMeeCountPt_like1 = new TH2F("hMeePt_like1","hMee vs p_{T} like sign electron;Mee(GeV/c^{2});p_{T}",40000,0,4,200,0,10);
-    hMeeCountPt_like2 = new TH2F("hMeePt_like2","hMee vs p_{T} like sign positron;Mee(GeV/c^{2});p_{T}",40000,0,4,200,0,10);
-    h_nSigmaElectron_P = new TH2F("h_nSigmaElectron_P","nSigmaElectron_P;P(GeV/c);nSigmaElectron",300,0,3,150,-10,5);
-    h_nSigmaElectron_P_tpc = new TH2F("h_nSigmaElectron_P_tpc","nSigmaElectron_P;P(GeV/c);nSigmaElectron",300,0,3,150,-10,5);
 
     TofId = new TH1F("TofId","1.13<1/#beta<1.24 0.3<p<0.5;TofId",23100,0,23100);
     TofId_nSigmaPi = new TH1F("TofId_nSigmaPi","1.13<1/#beta<1.24 0.3<p<0.5;nSigmaPi",200,-10,10);
@@ -261,7 +251,6 @@ if (mRunbyRunQA) {
     h_ETof_betavsP = new TH2F("h_ETof_betavsP","ETof beta;p(GeV/c);#frac{1}{#beta}(ETof)",300,0,3,250,0,2.5);
     h_ETof_deltaX = new TH1F("h_ETof_deltaX","ETof delta X;#Delta X (ETof);Counts",2000,-100,100);
     h_ETof_deltaY = new TH1F("h_ETof_deltaY","ETof delta Y;#Delta Y (ETof);Counts",2000,-100,100);
-
     // =================================================================
     // INITIALIZE THE NEW HISTOGRAMS HERE
     // =================================================================
@@ -291,39 +280,47 @@ if (mRunbyRunQA) {
     h_TofNsigmaP_afterTpcCut = new TH1F("h_TofNsigmaP_afterTpcCut", "TOF n#sigma_{p} (for TPC Protons);n#sigma_{p};Counts", 200, -10, 10);
 
 
-    const int nBinsP = 1000, nBinsNsigma = 300;
-    const float pMin = -5.0, pMax = 5.0;
-    const float nSigmaMin = -15.0, nSigmaMax = 15.0;
-
     // --- 2D TPC nSigma vs p*charge for tracks passing TOF cuts ---
-    h2_TpcNsigmaE_vs_p_afterTofCut = new TH2F("h2_TpcNsigmaE_vs_p_afterTofCut", "TPC n#sigma_{e} vs p*charge (for TOF Electrons);p*charge (GeV/c);n#sigma_{e}", nBinsP, pMin, pMax, nBinsNsigma, nSigmaMin, nSigmaMax);
-    h2_TpcNsigmaPi_vs_p_afterTofCut = new TH2F("h2_TpcNsigmaPi_vs_p_afterTofCut", "TPC n#sigma_{#pi} vs p*charge (for TOF Pions);p*charge (GeV/c);n#sigma_{#pi}", nBinsP, pMin, pMax, nBinsNsigma, nSigmaMin, nSigmaMax);
-    h2_TpcNsigmaK_vs_p_afterTofCut = new TH2F("h2_TpcNsigmaK_vs_p_afterTofCut", "TPC n#sigma_{K} vs p*charge (for TOF Kaons);p*charge (GeV/c);n#sigma_{K}", nBinsP, pMin, pMax, nBinsNsigma, nSigmaMin, nSigmaMax);
-    h2_TpcNsigmaP_vs_p_afterTofCut = new TH2F("h2_TpcNsigmaP_vs_p_afterTofCut", "TPC n#sigma_{p} vs p*charge (for TOF Protons);p*charge (GeV/c);n#sigma_{p}", nBinsP, pMin, pMax, nBinsNsigma, nSigmaMin, nSigmaMax);
+    h2_TpcNsigmaE_vs_p_afterTofCut = new TH2F("h2_TpcNsigmaE_vs_p_afterTofCut", "TPC n#sigma_{e} vs p*charge (for TOF Electrons);p*charge (GeV/c);n#sigma_{e}", 1000, -5.0, 5.0, 300, -15.0, 15.0);
+    h2_TpcNsigmaPi_vs_p_afterTofCut = new TH2F("h2_TpcNsigmaPi_vs_p_afterTofCut", "TPC n#sigma_{#pi} vs p*charge (for TOF Pions);p*charge (GeV/c);n#sigma_{#pi}", 1000, -5.0, 5.0, 300, -15.0, 15.0);
+    h2_TpcNsigmaK_vs_p_afterTofCut = new TH2F("h2_TpcNsigmaK_vs_p_afterTofCut", "TPC n#sigma_{K} vs p*charge (for TOF Kaons);p*charge (GeV/c);n#sigma_{K}", 1000, -5.0, 5.0, 300, -15.0, 15.0);
+    h2_TpcNsigmaP_vs_p_afterTofCut = new TH2F("h2_TpcNsigmaP_vs_p_afterTofCut", "TPC n#sigma_{p} vs p*charge (for TOF Protons);p*charge (GeV/c);n#sigma_{p}", 1000, -5.0, 5.0, 300, -15.0, 15.0);
 
     // --- 2D TOF nSigma vs p*charge for tracks passing TPC cuts ---
-    h2_TofNsigmaE_vs_p_afterTpcCut = new TH2F("h2_TofNsigmaE_vs_p_afterTpcCut", "TOF n#sigma_{e} vs p*charge (for TPC Electrons);p*charge (GeV/c);n#sigma_{e}", nBinsP, pMin, pMax, nBinsNsigma, nSigmaMin, nSigmaMax);
-    h2_TofNsigmaPi_vs_p_afterTpcCut = new TH2F("h2_TofNsigmaPi_vs_p_afterTpcCut", "TOF n#sigma_{#pi} vs p*charge (for TPC Pions);p*charge (GeV/c);n#sigma_{#pi}", nBinsP, pMin, pMax, nBinsNsigma, nSigmaMin, nSigmaMax);
-    h2_TofNsigmaK_vs_p_afterTpcCut = new TH2F("h2_TofNsigmaK_vs_p_afterTpcCut", "TOF n#sigma_{K} vs p*charge (for TPC Kaons);p*charge (GeV/c);n#sigma_{K}", nBinsP, pMin, pMax, nBinsNsigma, nSigmaMin, nSigmaMax);
-    h2_TofNsigmaP_vs_p_afterTpcCut = new TH2F("h2_TofNsigmaP_vs_p_afterTpcCut", "TOF n#sigma_{p} vs p*charge (for TPC Protons);p*charge (GeV/c);n#sigma_{p}", nBinsP, pMin, pMax, nBinsNsigma, nSigmaMin, nSigmaMax);
+    h2_TofNsigmaE_vs_p_afterTpcCut = new TH2F("h2_TofNsigmaE_vs_p_afterTpcCut", "TOF n#sigma_{e} vs p*charge (for TPC Electrons);p*charge (GeV/c);n#sigma_{e}", 1000, -5.0, 5.0, 300, -15.0, 15.0);
+    h2_TofNsigmaPi_vs_p_afterTpcCut = new TH2F("h2_TofNsigmaPi_vs_p_afterTpcCut", "TOF n#sigma_{#pi} vs p*charge (for TPC Pions);p*charge (GeV/c);n#sigma_{#pi}", 1000, -5.0, 5.0, 300, -15.0, 15.0);
+    h2_TofNsigmaK_vs_p_afterTpcCut = new TH2F("h2_TofNsigmaK_vs_p_afterTpcCut", "TOF n#sigma_{K} vs p*charge (for TPC Kaons);p*charge (GeV/c);n#sigma_{K}", 1000, -5.0, 5.0, 300, -15.0, 15.0);
+    h2_TofNsigmaP_vs_p_afterTpcCut = new TH2F("h2_TofNsigmaP_vs_p_afterTpcCut", "TOF n#sigma_{p} vs p*charge (for TPC Protons);p*charge (GeV/c);n#sigma_{p}", 1000, -5.0, 5.0, 300, -15.0, 15.0);
+    h_nSigmaElectron_P = new TH2F("h_nSigmaElectron_P","nSigmaElectron_P;P(GeV/c);nSigmaElectron",300,0,3,150,-10,5);
+    h_nSigmaElectron_P_tpc = new TH2F("h_nSigmaElectron_P_tpc","nSigmaElectron_P;P(GeV/c);nSigmaElectron",300,0,3,150,-10,5);
+
+  }
+
+  //invariant mass electron
+  //hMeeCount = new TH1F("hMee","hMee;Count;Mee(GeV/c^{2})",400,0,4);
+  hMeeCount = new TH1F("hMee","hMee;Mee(GeV/c^{2})",40000,0,4);
+  hMeeCount_like1 = new TH1F("hMee_like1","hMee like sign electron;Mee(GeV/c^{2})",40000,0,4);
+  hMeeCount_like2 = new TH1F("hMee_like2","hMee like sign positron;Mee(GeV/c^{2})",40000,0,4);
+  hMeeCountPt = new TH2F("hMeePt","hMee vs p_{T};Mee(GeV/c^{2});p_{T}",40000,0,4,200,0,10);
+  hMeeCountPt_like1 = new TH2F("hMeePt_like1","hMee vs p_{T} like sign electron;Mee(GeV/c^{2});p_{T}",40000,0,4,200,0,10);
+  hMeeCountPt_like2 = new TH2F("hMeePt_like2","hMee vs p_{T} like sign positron;Mee(GeV/c^{2});p_{T}",40000,0,4,200,0,10);
 
 
+  // =================================================================
 
-    // =================================================================
 
-
-    //tof module id
-    /*ModuleId_1 = new TH1F("ModuleId 1","0.8<1/#beta<0.9 0.4<P;ModuleId",40,0,40);
-    TofId_1 = new TH1F("TofId 1","0.8<1/#beta<0.9 0.4<P;TofId",23100,0,23100);
-    TrayId_1 = new TH1F("TrayId 1","0.8<1/#beta<0.9 0.4<P;TrayId",130,0,130);
-    ModuleId_2 = new TH1F("ModuleId 2","0.82<1/#beta<0.9 0.4<P;ModuleId",40,0,40);
-    TofId_2 = new TH1F("TofId 2","0.8<1/#beta<0.9 0.4<P;TofId",23100,0,23100);
-    ModuleId_3 = new TH1F("ModuleId 3","0.82<1/#beta<0.88 0.4<P;ModuleId",40,0,40);
-    TofId_3 = new TH1F("TofId 3","0.8<1/#beta<0.9 0.4<P;TofId",23100,0,23100);
-    ModuleId_4 = new TH1F("ModuleId 4","0.84<1/#beta<0.88 0.4<P;ModuleId",40,0,40);
-    TofId_4 = new TH1F("TofId 4","0.8<1/#beta<0.9 0.4<P;TofId",23100,0,23100);
-    ModuleId_5 = new TH1F("ModuleId 5","0.84<1/#beta<0.9 & 0.4<P;ModuleId",40,0,40);
-    TofId_5 = new TH1F("TofId 5","0.8<1/#beta<0.9 0.4<P;TofId",23100,0,23100);*/
+  //tof module id
+  /*ModuleId_1 = new TH1F("ModuleId 1","0.8<1/#beta<0.9 0.4<P;ModuleId",40,0,40);
+  TofId_1 = new TH1F("TofId 1","0.8<1/#beta<0.9 0.4<P;TofId",23100,0,23100);
+  TrayId_1 = new TH1F("TrayId 1","0.8<1/#beta<0.9 0.4<P;TrayId",130,0,130);
+  ModuleId_2 = new TH1F("ModuleId 2","0.82<1/#beta<0.9 0.4<P;ModuleId",40,0,40);
+  TofId_2 = new TH1F("TofId 2","0.8<1/#beta<0.9 0.4<P;TofId",23100,0,23100);
+  ModuleId_3 = new TH1F("ModuleId 3","0.82<1/#beta<0.88 0.4<P;ModuleId",40,0,40);
+  TofId_3 = new TH1F("TofId 3","0.8<1/#beta<0.9 0.4<P;TofId",23100,0,23100);
+  ModuleId_4 = new TH1F("ModuleId 4","0.84<1/#beta<0.88 0.4<P;ModuleId",40,0,40);
+  TofId_4 = new TH1F("TofId 4","0.8<1/#beta<0.9 0.4<P;TofId",23100,0,23100);
+  ModuleId_5 = new TH1F("ModuleId 5","0.84<1/#beta<0.9 & 0.4<P;ModuleId",40,0,40);
+  TofId_5 = new TH1F("TofId 5","0.8<1/#beta<0.9 0.4<P;TofId",23100,0,23100);*/
 }
 //-----------------------------------------------------------------------------
 Int_t StPicoDstarMixedMaker::Finish()
@@ -331,6 +328,7 @@ Int_t StPicoDstarMixedMaker::Finish()
 mFile->cd();
   //write the hists
  //event QA
+ if(QA){
     hVxVyVz->Write();
     hVz->Write();
     hVpdVz->Write();
@@ -391,14 +389,6 @@ mFile->cd();
     h_Vz_btofZLocal->Write();
     h_Vz_btofYLocal->Write();
 
-    hMeeCount->Write();
-    hMeeCount_like1->Write();
-    hMeeCount_like2->Write();
-    hMeeCountPt->Write();
-    hMeeCountPt_like1->Write();
-    hMeeCountPt_like2->Write();
-    h_nSigmaElectron_P->Write();
-    h_nSigmaElectron_P_tpc->Write();
     h_p_E0->Write();
     h_bemcdz->Write();
     h_bemcDphi->Write();
@@ -435,6 +425,44 @@ mFile->cd();
     TofId_4->Write();
     ModuleId_5->Write();
     TofId_5->Write();*/
+  h_nSigmaElectron_P->Write();
+  h_nSigmaElectron_P_tpc->Write();
+
+  // Inclusive
+  h_nSigmaElectron_Inclusive->Write();
+  h_nSigmaPion_Inclusive->Write();
+  h_nSigmaKaon_Inclusive->Write();
+  h_nSigmaProton_Inclusive->Write();
+  
+  h_nSigmaVsPcharge_Electron->Write();
+  h_nSigmaVsPcharge_Pion->Write();
+  h_nSigmaVsPcharge_Kaon->Write();
+  h_nSigmaVsPcharge_Proton->Write();
+
+  // TPC after TOF cuts
+  h_TpcNsigmaE_afterTofCut->Write();
+  h_TpcNsigmaPi_afterTofCut->Write();
+  h_TpcNsigmaK_afterTofCut->Write();
+  h_TpcNsigmaP_afterTofCut->Write();
+
+  // TOF after TPC cuts
+  h_TofNsigmaE_afterTpcCut->Write();
+  h_TofNsigmaPi_afterTpcCut->Write();
+  h_TofNsigmaK_afterTpcCut->Write();
+  h_TofNsigmaP_afterTpcCut->Write();
+
+  // TPC after TOF cuts (2D)
+  h2_TpcNsigmaE_vs_p_afterTofCut->Write();
+  h2_TpcNsigmaPi_vs_p_afterTofCut->Write();
+  h2_TpcNsigmaK_vs_p_afterTofCut->Write();
+  h2_TpcNsigmaP_vs_p_afterTofCut->Write();
+
+  // TOF after TPC cuts (2D)
+  h2_TofNsigmaE_vs_p_afterTpcCut->Write();
+  h2_TofNsigmaPi_vs_p_afterTpcCut->Write();
+  h2_TofNsigmaK_vs_p_afterTpcCut->Write();
+  h2_TofNsigmaP_vs_p_afterTpcCut->Write();  
+
 
   if (mRunbyRunQA) {
     pVpdVz->Write();
@@ -479,46 +507,16 @@ mFile->cd();
     p_ETof_deltaY->Write();
 
   }
-
-    // =================================================================
-    // WRITE THE NEW HISTOGRAMS TO THE FILE
-    // =================================================================
-
-  // Inclusive
-  h_nSigmaElectron_Inclusive->Write();
-  h_nSigmaPion_Inclusive->Write();
-  h_nSigmaKaon_Inclusive->Write();
-  h_nSigmaProton_Inclusive->Write();
-  
-  h_nSigmaVsPcharge_Electron->Write();
-  h_nSigmaVsPcharge_Pion->Write();
-  h_nSigmaVsPcharge_Kaon->Write();
-  h_nSigmaVsPcharge_Proton->Write();
-  
-  // TPC after TOF cuts
-  h_TpcNsigmaE_afterTofCut->Write();
-  h_TpcNsigmaPi_afterTofCut->Write();
-  h_TpcNsigmaK_afterTofCut->Write();
-  h_TpcNsigmaP_afterTofCut->Write();
-
-  // TOF after TPC cuts
-  h_TofNsigmaE_afterTpcCut->Write();
-  h_TofNsigmaPi_afterTpcCut->Write();
-  h_TofNsigmaK_afterTpcCut->Write();
-  h_TofNsigmaP_afterTpcCut->Write();
-
-  // TPC after TOF cuts (2D)
-  h2_TpcNsigmaE_vs_p_afterTofCut->Write();
-  h2_TpcNsigmaPi_vs_p_afterTofCut->Write();
-  h2_TpcNsigmaK_vs_p_afterTofCut->Write();
-  h2_TpcNsigmaP_vs_p_afterTofCut->Write();
-
-  // TOF after TPC cuts (2D)
-  h2_TofNsigmaE_vs_p_afterTpcCut->Write();
-  h2_TofNsigmaPi_vs_p_afterTpcCut->Write();
-  h2_TofNsigmaK_vs_p_afterTpcCut->Write();
-  h2_TofNsigmaP_vs_p_afterTpcCut->Write();  
-
+ }
+  // =================================================================
+  // WRITE THE NEW HISTOGRAMS TO THE FILE
+  // =================================================================
+  hMeeCount->Write();
+  hMeeCount_like1->Write();
+  hMeeCount_like2->Write();
+  hMeeCountPt->Write();
+  hMeeCountPt_like1->Write();
+  hMeeCountPt_like2->Write();
   // =================================================================
 
   mFile->Close();
@@ -766,24 +764,25 @@ Int_t StPicoDstarMixedMaker::Make()
   bool vrcut =  sqrt(TMath::Power(pVtx.x(), 2) + TMath::Power(pVtx.y(), 2)) <=  anaCuts::Vr ;
   // bool vpdvzcut = fabs(pVtx.z() - picoEvent->vzVpd()) < 3;
   bool vpdvzcut = true;
-  if (vzcut) hpassevtcut->Fill(2);
-  if (vzcut &&  vrcut) hpassevtcut->Fill(3);
+  if (QA && vzcut) hpassevtcut->Fill(2);
+  if (QA && vzcut &&  vrcut) hpassevtcut->Fill(3);
   // if (vzcut && vrcut  &&  vpdvzcut ) hpassevtcut->Fill(4);
   if (vzcut && vrcut  &&  vpdvzcut && verrcut ) hpassevtcut->Fill(4);
   bool refusepileup = picoEvent->refMult()<picoEvent->btofTrayMultiplicity()*0.36+45;
   bool refusebadtof = picoEvent->refMult()>picoEvent->btofTrayMultiplicity()*0.28-115;
   bool passCentralityCut = refusepileup && refusebadtof  && verrcut && vrcut && fabs(pVtx.z()) < 10; 
-  if (passCentralityCut) hrefmult->Fill(picoEvent->refMult());
-  if (passCentralityCut) hrefmult_Pos->Fill(picoEvent->refMultPos());
-  if (passCentralityCut) hrefmult_Neg->Fill(picoEvent->refMultNeg());
+  if (QA && passCentralityCut) hrefmult->Fill(picoEvent->refMult());
+  if (QA && passCentralityCut) hrefmult_Pos->Fill(picoEvent->refMultPos());
+  if (QA && passCentralityCut) hrefmult_Neg->Fill(picoEvent->refMultNeg());
   if (isGoodEvent(picoEvent)){
     // StThreeVectorF pVtx = picoEvent->primaryVertex();
     
     
-   // if(mRunId < 22106001) return 0;   
+  // if(mRunId < 22106001) return 0;   
 
-    if(DEBUG) cout<<"star event QA"<<endl;
-    TVector3 pVtx = picoEvent->primaryVertex();
+  if(DEBUG) cout<<"star event QA"<<endl;
+  TVector3 pVtx = picoEvent->primaryVertex();
+  if(QA){
     mVx = pVtx.x();
     mVy = pVtx.y();
     mVz = pVtx.z();
@@ -801,6 +800,7 @@ Int_t StPicoDstarMixedMaker::Make()
     hnTofMulvsRef->Fill(picoEvent->refMult(),picoEvent->btofTrayMultiplicity());  
     hnTofMatch->Fill(picoEvent->nBTOFMatch());  
     hnTofMatvsRef->Fill(picoEvent->refMult(),picoEvent->nBTOFMatch());  
+  }
     double ntofhits = 0;
     //    int ntrack_tof_hits =0; 
     int nTracks = picoDst->numberOfTracks();
@@ -808,7 +808,7 @@ Int_t StPicoDstarMixedMaker::Make()
       StPicoTrack* trk = picoDst->track(itrack);
 
       TVector3 mom = trk->pMom();
-
+      if(QA){
       hgDca->Fill(trk->gDCA(mVx,mVy,mVz));
       if(trk->charge()>0){
         hpt_Pos->Fill(mom.Perp());
@@ -822,11 +822,13 @@ Int_t StPicoDstarMixedMaker::Make()
       hnHitsFit->Fill(trk->nHitsFit()*trk->charge());
       hnHitsPoss->Fill(trk->nHitsPoss()*trk->charge());
       hnHitsDedx->Fill(trk->nHitsDedx()*trk->charge());
+    }
       bool isprimary = trk->isPrimary();
       bool goodtrack = isGoodTrack(trk,trk->gDCA(mVx,mVy,mVz));
       if (!goodtrack) continue;
       if (!isprimary) continue;
       
+      if(QA){
       hpDca->Fill(trk->gDCA(mVx,mVy,mVz));
 
       int bemcId = trk->bemcPidTraitsIndex();
@@ -884,7 +886,7 @@ Int_t StPicoDstarMixedMaker::Make()
       hnHitsPoss_cut->Fill(trk->nHitsPoss()*trk->charge());
       hnHitsDedx_cut->Fill(trk->nHitsDedx()*trk->charge());
       h_nHitsDedx_p->Fill(mom.Mag()*trk->charge(),trk->nHitsDedx());
-      
+    }
       double beta = getTofBeta(trk);
       bool tofmatch = (beta!=std::numeric_limits<float>::quiet_NaN()) && beta>0;
       
@@ -894,6 +896,7 @@ Int_t StPicoDstarMixedMaker::Make()
       double nSigmaPi = trk->nSigmaPion();
       double nSigmaK = trk->nSigmaKaon();
       double nSigmaP = trk->nSigmaProton();
+      if(QA){
       // Fill 1D inclusive histograms
       h_nSigmaElectron_Inclusive->Fill(nSigmaE);
       h_nSigmaPion_Inclusive->Fill(nSigmaPi);
@@ -905,7 +908,7 @@ Int_t StPicoDstarMixedMaker::Make()
       h_nSigmaVsPcharge_Pion->Fill(p * charge, nSigmaPi);
       h_nSigmaVsPcharge_Kaon->Fill(p * charge, nSigmaK);
       h_nSigmaVsPcharge_Proton->Fill(p * charge, nSigmaP);
-
+      }
 	//choose inclusive electron
       // bool isTPCElectron =  trk->nSigmaElectron()<2 && trk->nSigmaElectron()>0.75;
       bool isTPCElectron=0;
@@ -913,7 +916,7 @@ Int_t StPicoDstarMixedMaker::Make()
       else isTPCElectron = trk->nSigmaElectron()<2 && trk->nSigmaElectron()>(3*mom.Mag()-3.15);
       bool isTOFElectron = tofmatch?fabs(1./beta-1.)<0.025:false;
   
-      h_nSigmaElectron_P_tpc->Fill(mom.Mag(),trk->nSigmaElectron());      
+      if(QA)h_nSigmaElectron_P_tpc->Fill(mom.Mag(),trk->nSigmaElectron());      
 
       // --- Pion ---
       bool isTpcPion = fabs(nSigmaPi) < 2.0;
@@ -946,17 +949,17 @@ Int_t StPicoDstarMixedMaker::Make()
       }
 
       // --- Fill TPC nSigma if TOF cut is passed ---
-      if (isTOFElectron) {h_TpcNsigmaE_afterTofCut->Fill(nSigmaE);h2_TpcNsigmaE_vs_p_afterTofCut->Fill(p * charge, nSigmaE);}
-      if (isTofPion) {h_TpcNsigmaPi_afterTofCut->Fill(nSigmaPi);h2_TpcNsigmaPi_vs_p_afterTofCut->Fill(p * charge, nSigmaPi);}
-      if (isTofKaon) {h_TpcNsigmaK_afterTofCut->Fill(nSigmaK);h2_TpcNsigmaK_vs_p_afterTofCut->Fill(p * charge, nSigmaK);}
-      if (isTofProton) {h_TpcNsigmaP_afterTofCut->Fill(nSigmaP);h2_TpcNsigmaP_vs_p_afterTofCut->Fill(p * charge, nSigmaP);}
+      if (QA && isTOFElectron) {h_TpcNsigmaE_afterTofCut->Fill(nSigmaE);h2_TpcNsigmaE_vs_p_afterTofCut->Fill(p * charge, nSigmaE);}
+      if (QA && isTofPion) {h_TpcNsigmaPi_afterTofCut->Fill(nSigmaPi);h2_TpcNsigmaPi_vs_p_afterTofCut->Fill(p * charge, nSigmaPi);}
+      if (QA && isTofKaon) {h_TpcNsigmaK_afterTofCut->Fill(nSigmaK);h2_TpcNsigmaK_vs_p_afterTofCut->Fill(p * charge, nSigmaK);}
+      if (QA && isTofProton) {h_TpcNsigmaP_afterTofCut->Fill(nSigmaP);h2_TpcNsigmaP_vs_p_afterTofCut->Fill(p * charge, nSigmaP);}
 
 
       if (isTOFElectron && isTPCElectron) {
-        hnEvsEtavsVz->Fill(mom.Eta(),mVz); 
-        hnEvsPhivsVz->Fill(mom.Phi(),mVz);
+        if(QA)hnEvsEtavsVz->Fill(mom.Eta(),mVz); 
+        if(QA)hnEvsPhivsVz->Fill(mom.Phi(),mVz);
         
-        p_nSigmaE->Fill(runnum[mRunId],trk->nSigmaElectron());
+        if(QA)p_nSigmaE->Fill(runnum[mRunId],trk->nSigmaElectron());
         //p_nSigmaTofE->Fill(runnum[mRunId],pbtofnSigmaE);
         
         if(trk->charge()<0 && tofmatch)
@@ -1010,11 +1013,11 @@ Int_t StPicoDstarMixedMaker::Make()
       
       if (tofmatch) {
         ntofhits++;
-        hinvBetavsP->Fill(mom.Mag(),1./beta);
+        if(QA)hinvBetavsP->Fill(mom.Mag(),1./beta);
         
         if(fabs(1.0/beta - 1) < 0.025)
         {
-         h_nSigmaElectron_P->Fill(mom.Mag(),trk->nSigmaElectron()); 
+         if(QA)h_nSigmaElectron_P->Fill(mom.Mag(),trk->nSigmaElectron()); 
         }       
 
        // hinvBetavsP_RunID[runnum[mRunId]]->Fill(mom.Mag(),1./beta);
@@ -1034,10 +1037,10 @@ Int_t StPicoDstarMixedMaker::Make()
         if (1./beta<0.88 && mom.Mag()>0.8 && mom.Mag()<1.5) {
           int tofid = tofPid->btofCellId();
         //  TofId_1->Fill(tofid);
-          hBadTofId->Fill(tofid/192+1,(tofid%192)/6+1,tofid%6+1);
+          if(QA)hBadTofId->Fill(tofid/192+1,(tofid%192)/6+1,tofid%6+1);
         }
 
-        if(tofPid){
+        if(QA && tofPid){
           if (isTPCElectron) {h_TofNsigmaE_afterTpcCut->Fill(tofPid->nSigmaElectron());h2_TofNsigmaE_vs_p_afterTpcCut->Fill(p * charge, tofPid->nSigmaElectron());}
           if (isTpcPion) {h_TofNsigmaPi_afterTpcCut->Fill(tofPid->nSigmaPion());h2_TofNsigmaPi_vs_p_afterTpcCut->Fill(p * charge, tofPid->nSigmaPion());}
           if (isTpcKaon) {h_TofNsigmaK_afterTpcCut->Fill(tofPid->nSigmaKaon());h2_TofNsigmaK_vs_p_afterTpcCut->Fill(p * charge, tofPid->nSigmaKaon());}
@@ -1049,7 +1052,7 @@ Int_t StPicoDstarMixedMaker::Make()
          {
             int tofid = tofPid->btofCellId();
             TofId->Fill(tofid);
-            TofId_nSigmaPi->Fill(trk->nSigmaPion());
+            if(QA)TofId_nSigmaPi->Fill(trk->nSigmaPion());
             //TrayId_1->Fill(tofid/192+1);
             //ModuleId_1->Fill((tofid%192)/6+1);
          }
@@ -1057,7 +1060,7 @@ Int_t StPicoDstarMixedMaker::Make()
          
         if (isTOFElectron && isTPCElectron) {
 
-        p_nSigmaTofE->Fill(runnum[mRunId],tofPid->nSigmaElectron());
+        if(QA)p_nSigmaTofE->Fill(runnum[mRunId],tofPid->nSigmaElectron());
         }
        /* if(1.0/beta>0.8 && 1.0/beta<0.9 && mom.Mag()>0.4 && mom.Mag()<3)
          {
@@ -1091,10 +1094,10 @@ Int_t StPicoDstarMixedMaker::Make()
           TofId_5->Fill(tofid);
             ModuleId_5->Fill((tofid%192)/6+1);
          }*/
-        hNsigEvsinvBeta->Fill(trk->nSigmaElectron(),1./beta,mom.Mag());
+        if(QA)hNsigEvsinvBeta->Fill(trk->nSigmaElectron(),1./beta,mom.Mag());
       }
-      hdEdx->Fill(mom.Mag()*trk->charge(),trk->dEdx());
-      h_mTpc->Fill(mom.Mag()*trk->charge(),pow(mom.Mag()*sqrt(1-beta*beta)*1.0/beta,2));
+      if(QA)hdEdx->Fill(mom.Mag()*trk->charge(),trk->dEdx());
+      if(QA)h_mTpc->Fill(mom.Mag()*trk->charge(),pow(mom.Mag()*sqrt(1-beta*beta)*1.0/beta,2));
     }
     hnTofHitvsRef->Fill(ntofhits,picoEvent->refMult());
     

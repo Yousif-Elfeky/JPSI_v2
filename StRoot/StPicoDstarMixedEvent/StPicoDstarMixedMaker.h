@@ -80,6 +80,9 @@ class StPicoDstarMixedMaker : public StMaker
     void setRunbyRunQA(bool b){
       mRunbyRunQA = b;
     }
+    void setQA(bool qa){
+      QA=qa;
+    }
 
     void getBadruns(string inputFileName);
   private: 
@@ -92,6 +95,7 @@ class StPicoDstarMixedMaker : public StMaker
     string mRunNumList;
     vector<int> mBadRun;
 
+    bool QA;
     //Event level
     int  mRunId;
     float mVpdVz;

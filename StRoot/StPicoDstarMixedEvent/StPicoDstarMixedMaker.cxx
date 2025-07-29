@@ -801,8 +801,8 @@ Int_t StPicoDstarMixedMaker::Make()
     double ntofhits = 0;
     //    int ntrack_tof_hits =0; 
     
-    // electroninfo.clear();
-    // positroninfo.clear();  
+    electroninfo.clear();
+    positroninfo.clear();  
     int nTracks = picoDst->numberOfTracks();
     for (int itrack=0;itrack<nTracks;itrack++){
       StPicoTrack* trk = picoDst->track(itrack);
@@ -999,12 +999,7 @@ Int_t StPicoDstarMixedMaker::Make()
             particleinfo.p1 = mom.X();
             particleinfo.p2 = mom.Y();
             particleinfo.p3 = mom.Z();
-            std::cout << "DEBUG: Event " << picoEvent->eventId() << ", Track " << itrack
-              << ", pT = " << particleinfo.pt << ", eta = " << particleinfo.eta
-              << ", nSigmaPi = " << particleinfo.nSigmaPi << std::endl;
-            std::cout << "DEBUG: Positron vector size before push_back: " << positroninfo.size() << std::endl;
             positroninfo.push_back(particleinfo);
-            std::cout << "DEBUG: Successfully pushed back positron." << std::endl;
 
             // cout<<"debug02"<<endl;
              /*current_ePlus[current_nEPlus].SetPx(mom.x());
@@ -1105,7 +1100,7 @@ Int_t StPicoDstarMixedMaker::Make()
       if(QA)hdEdx->Fill(mom.Mag()*trk->charge(),trk->dEdx());
       if(QA)h_mTpc->Fill(mom.Mag()*trk->charge(),pow(mom.Mag()*sqrt(1-beta*beta)*1.0/beta,2));
     }
-    hnTofHitvsRef->Fill(ntofhits,picoEvent->refMult());
+    if(QA)hnTofHitvsRef->Fill(ntofhits,picoEvent->refMult());
     
       int x=0;
       int y=0;

@@ -832,27 +832,27 @@ Int_t StPicoDstarMixedMaker::Make()
       if (!isprimary) continue;
       // good_pri++;
       
-      if(QA){
-      hpDca->Fill(trk->gDCA(mVx,mVy,mVz));
+      
+      if(QA)hpDca->Fill(trk->gDCA(mVx,mVy,mVz));
 
       int bemcId = trk->bemcPidTraitsIndex();
       if(bemcId>=0){
          StPicoBEmcPidTraits * bemctrait = picoDst->bemcPidTraits(bemcId);
          if(bemctrait){
             float nSMDphi = bemctrait->bemcSmdNPhi();
-            h_nSMDphi->Fill(nSMDphi);
+            if(QA)h_nSMDphi->Fill(nSMDphi);
             float nSMDeta = bemctrait->bemcSmdNEta();
-            h_nSMDeta->Fill(nSMDeta);
+            if(QA)h_nSMDeta->Fill(nSMDeta);
             float btowPhiDz = bemctrait->btowPhiDist();
-            h_btowPhiDz->Fill(btowPhiDz);
+            if(QA)h_btowPhiDz->Fill(btowPhiDz);
             float btowEtaDz = bemctrait->btowEtaDist();
-            h_btowEtaDz->Fill(btowEtaDz);
+            if(QA)h_btowEtaDz->Fill(btowEtaDz);
             float bemcdz = bemctrait->bemcZDist();
-            h_bemcdz->Fill(bemcdz);
+            if(QA)h_bemcdz->Fill(bemcdz);
             float bemcDphi = bemctrait->bemcPhiDist();
-            h_bemcDphi->Fill(bemcDphi);
+            if(QA)h_bemcDphi->Fill(bemcDphi);
             float E0 = bemctrait->bemcE0(); 
-            h_p_E0->Fill(trk->gMom().Mag()*1.0/E0); 
+            if(QA)h_p_E0->Fill(trk->gMom().Mag()*1.0/E0); 
           }
       }
      
@@ -861,11 +861,11 @@ Int_t StPicoDstarMixedMaker::Make()
         StPicoMtdPidTraits * mtdtrait = picoDst->mtdPidTraits(mtdId);
         if(mtdtrait){
           float mtdDeltaY = mtdtrait->deltaY();
-          h_mtdDeltaY->Fill(mtdDeltaY);
+          if(QA)h_mtdDeltaY->Fill(mtdDeltaY);
           float mtdDeltaZ = mtdtrait->deltaZ();
-          h_mtdDeltaZ->Fill(mtdDeltaZ);
+          if(QA)h_mtdDeltaZ->Fill(mtdDeltaZ);
           float mtdDeltaTOF = mtdtrait->deltaTimeOfFlight();
-          h_mtdDeltaTOF->Fill(mtdDeltaTOF);
+          if(QA)h_mtdDeltaTOF->Fill(mtdDeltaTOF);
           //cout<<"mtdDeltaTOF: "<<mtdDeltaTOF<<endl;
         }
       }
@@ -873,24 +873,24 @@ Int_t StPicoDstarMixedMaker::Make()
 
       // StThreeVectorF mom = trk->pMom();  
       if(trk->charge()>0){
-        hpt_Pos_cut->Fill(mom.Perp());
-        hGpt_Pos_cut->Fill(trk->gMom().Perp());
-        h_EtavsPhi_Pos->Fill(mom.Eta(),mom.Phi());
+        if(QA)hpt_Pos_cut->Fill(mom.Perp());
+        if(QA)hGpt_Pos_cut->Fill(trk->gMom().Perp());
+        if(QA)h_EtavsPhi_Pos->Fill(mom.Eta(),mom.Phi());
       }else{
-        hpt_Neg_cut->Fill(mom.Perp());
-        hGpt_Neg_cut->Fill(trk->gMom().Perp());
-        h_EtavsPhi_Neg->Fill(mom.Eta(),mom.Phi());
+        if(QA)hpt_Neg_cut->Fill(mom.Perp());
+        if(QA)hGpt_Neg_cut->Fill(trk->gMom().Perp());
+        if(QA)h_EtavsPhi_Neg->Fill(mom.Eta(),mom.Phi());
       }
       // hpDca->Fill(trk->pDca(mVx,mVy,mVz));
-      hPhi_cut->Fill(mom.Phi());
-      hEta_cut->Fill(mom.Eta());
-      h_pT_Eta->Fill(mom.Perp()*trk->charge(),mom.Eta());
-      h_pT_Phi->Fill(mom.Perp()*trk->charge(),mom.Phi());
-      hnHitsFit_cut->Fill(trk->nHitsFit()*trk->charge());
-      hnHitsPoss_cut->Fill(trk->nHitsPoss()*trk->charge());
-      hnHitsDedx_cut->Fill(trk->nHitsDedx()*trk->charge());
-      h_nHitsDedx_p->Fill(mom.Mag()*trk->charge(),trk->nHitsDedx());
-    }
+      if(QA)hPhi_cut->Fill(mom.Phi());
+      if(QA)hEta_cut->Fill(mom.Eta());
+      if(QA)h_pT_Eta->Fill(mom.Perp()*trk->charge(),mom.Eta());
+      if(QA)h_pT_Phi->Fill(mom.Perp()*trk->charge(),mom.Phi());
+      if(QA)hnHitsFit_cut->Fill(trk->nHitsFit()*trk->charge());
+      if(QA)hnHitsPoss_cut->Fill(trk->nHitsPoss()*trk->charge());
+      if(QA)hnHitsDedx_cut->Fill(trk->nHitsDedx()*trk->charge());
+      if(QA)h_nHitsDedx_p->Fill(mom.Mag()*trk->charge(),trk->nHitsDedx());
+
       double beta = getTofBeta(trk);
       bool tofmatch = (beta!=std::numeric_limits<float>::quiet_NaN()) && beta>0;
       
@@ -900,19 +900,18 @@ Int_t StPicoDstarMixedMaker::Make()
       double nSigmaPi = trk->nSigmaPion();
       double nSigmaK = trk->nSigmaKaon();
       double nSigmaP = trk->nSigmaProton();
-      if(QA){
       // Fill 1D inclusive histograms
-      h_nSigmaElectron_Inclusive->Fill(nSigmaE);
-      h_nSigmaPion_Inclusive->Fill(nSigmaPi);
-      h_nSigmaKaon_Inclusive->Fill(nSigmaK);
-      h_nSigmaProton_Inclusive->Fill(nSigmaP);
+      if(QA)h_nSigmaElectron_Inclusive->Fill(nSigmaE);
+      if(QA)h_nSigmaPion_Inclusive->Fill(nSigmaPi);
+      if(QA)h_nSigmaKaon_Inclusive->Fill(nSigmaK);
+      if(QA)h_nSigmaProton_Inclusive->Fill(nSigmaP);
       
       // Fill 2D inclusive histograms vs p*charge
-      h_nSigmaVsPcharge_Electron->Fill(p * charge, nSigmaE);
-      h_nSigmaVsPcharge_Pion->Fill(p * charge, nSigmaPi);
-      h_nSigmaVsPcharge_Kaon->Fill(p * charge, nSigmaK);
-      h_nSigmaVsPcharge_Proton->Fill(p * charge, nSigmaP);
-      }
+      if(QA)h_nSigmaVsPcharge_Electron->Fill(p * charge, nSigmaE);
+      if(QA)h_nSigmaVsPcharge_Pion->Fill(p * charge, nSigmaPi);
+      if(QA)h_nSigmaVsPcharge_Kaon->Fill(p * charge, nSigmaK);
+      if(QA)h_nSigmaVsPcharge_Proton->Fill(p * charge, nSigmaP);
+
 	//choose inclusive electron
       // bool isTPCElectron =  trk->nSigmaElectron()<2 && trk->nSigmaElectron()>0.75;
       bool isTPCElectron=0;

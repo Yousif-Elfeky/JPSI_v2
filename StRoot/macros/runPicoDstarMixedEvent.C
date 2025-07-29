@@ -18,6 +18,7 @@ void runPicoDstarMixedEvent(TString picolist="input.list", std::string  runlist=
   loadSharedLibraries();
   // load();
   gSystem->Load("StPicoEvent");
+  gSystem->Load("StRefMultCorr");
   gSystem->Load("StPicoDstMaker");
   gSystem->Load("StPicoDstarMixedEvent");
 

@@ -36,6 +36,11 @@
 #include "calmean.h"
 #include "TLorentzVector.h"
 #include "TVector3.h"
+#include "THnSparse.h"
+
+#include "StRefMultCorr/StRefMultCorr.h"
+#include "StRefMultCorr/CentralityMaker.h"
+
 bool DEBUG = false;
 
 
@@ -308,9 +313,24 @@ void StPicoDstarMixedMaker::initHists(){
   hMeeCountPt_like1 = new TH2F("hMeePt_like1","hMee vs p_{T} like sign electron;Mee(GeV/c^{2});p_{T}",40000,0,4,200,0,10);
   hMeeCountPt_like2 = new TH2F("hMeePt_like2","hMee vs p_{T} like sign positron;Mee(GeV/c^{2});p_{T}",40000,0,4,200,0,10);
 
+    hCentrality = new TH1F("hCentrality", "Centrality Distribution (weighted)", 9, -0.5, 8.5);
+    hCentrality_noWgt = new TH1F("hCentrality_noWgt", "Centrality Distribution (no weight)", 9, -0.5, 8.5);
+    
+    // Event Plane Resolution Histograms
+    hCos_v2_ab = new TH2F("hCos_v2_ab", "cos(2(#Psi_{a}-#Psi_{b})) vs Centrality;Centrality;cos(2#Delta#Psi_{ab})", 9, -0.5, 8.5, 200, -1.05, 1.05);
+    hCos_v2_ac = new TH2F("hCos_v2_ac", "cos(2(#Psi_{a}-#Psi_{c})) vs Centrality;Centrality;cos(2#Delta#Psi_{ac})", 9, -0.5, 8.5, 200, -1.05, 1.05);
+    hCos_v2_bc = new TH2F("hCos_v2_bc", "cos(2(#Psi_{b}-#Psi_{c})) vs Centrality;Centrality;cos(2#Delta#Psi_{bc})", 9, -0.5, 8.5, 200, -1.05, 1.05);
 
-  // =================================================================
+    int    bins[4]    = {  9,   25,  150,   20};
+    double xmin[4]    = {-0.5, 0.0, 2.80,  0.0};
+    double xmax_v2[4] = {9.0, 10.0, 2.00, TMath::Pi()};
+    const char* axisTitles = ";Centrality;p_{T} (GeV/c);Mass (GeV/c^{2});#Delta#phi_{2}";
 
+    hJpsi_v2_UL     = new THnSparseF("hJpsi_v2_UL",     TString("Unlike-sign ") + axisTitles, 4, bins, xmin, xmax_v2);
+    hJpsi_v2_LSpp   = new THnSparseF("hJpsi_v2_LSpp",   TString("Like-sign e+e+ ") + axisTitles, 4, bins, xmin, xmax_v2);
+    hJpsi_v2_LSnn   = new THnSparseF("hJpsi_v2_LSnn",   TString("Like-sign e-e- ") + axisTitles, 4, bins, xmin, xmax_v2);
+
+    hJpsi_v2_UL->Sumw2(); hJpsi_v2_LSpp->Sumw2(); hJpsi_v2_LSnn->Sumw2();
 
   //tof module id
   /*ModuleId_1 = new TH1F("ModuleId 1","0.8<1/#beta<0.9 0.4<P;ModuleId",40,0,40);
@@ -520,6 +540,14 @@ mFile->cd();
   hMeeCountPt->Write();
   hMeeCountPt_like1->Write();
   hMeeCountPt_like2->Write();
+  hCentrality->Write();
+  hCentrality_noWgt->Write();
+  hCos_v2_ab->Write();
+  hCos_v2_ac->Write();
+  hCos_v2_bc->Write();
+  hJpsi_v2_UL->Write();
+  hJpsi_v2_LSpp->Write();
+  hJpsi_v2_LSnn->Write();
   // =================================================================
 
   mFile->Close();
@@ -779,34 +807,60 @@ Int_t StPicoDstarMixedMaker::Make()
     
     
   // if(mRunId < 22106001) return 0;   
+    //refmultCorrUtil = new StRefMultCorr("refmult","Isobar");
+    StRefMultCorr *refmultCorrUtil = CentralityMaker::instance()->getRefMultCorr();
+    refmultCorrUtil -> init(mRunId);
+    refmultCorrUtil->initEvent(picoEvent->refMult(),mVz,picoEvent->ZDCx());
+    Bool_t isBadRun_Cen = refmultCorrUtil->isBadRun(mRunId);
+    Bool_t isPileUpEvt_Cen = !refmultCorrUtil->passnTofMatchRefmultCut(picoEvent->refMult()*1.0,picoEvent->nBTOFMatch()*1.0);
+    mCent  = refmultCorrUtil->getCentralityBin9();
+    //if (isBadRun_Cen || isPileUpEvt_Cen || mCent<2 || mCent>8)  return kStOK;
+    if (isBadRun_Cen || isPileUpEvt_Cen || mCent<0 || mCent>8)  return kStOK;
+    CurrentEvent_Id = -999;
+    CurrentEvent_Id = picoEvent -> eventId();
+    
+    mWeight = refmultCorrUtil->getWeight();
+    mRefmult = picoEvent->refMult();
+    // hCentralityWeighted->Fill(mCent, mWeight);
+    // hCentrality_noWgt->Fill(mCent);
+    // hVpdVz->Fill(mVpdVz, mVz);
+    // hVzDiff->Fill(mVpdVz - mVz);
+    // --- ADDED FOR V_N ANALYSIS ---
+    getQVectors(picoDst, mEventPlaneV2, 2);
+    // Fill profiles for EP resolution calculation
+    hCos_v2_ab->Fill(mCent, cos(2. * (mEventPlaneV2[0].Phi() - mEventPlaneV2[1].Phi())), weight);
+    hCos_v2_ac->Fill(mCent, cos(2. * (mEventPlaneV2[0].Phi() - mEventPlaneV2[2].Phi())), weight);
+    hCos_v2_bc->Fill(mCent, cos(2. * (mEventPlaneV2[1].Phi() - mEventPlaneV2[2].Phi())), weight);
+    
+	float eventPlane = calcEventPlane(picoDst, picoEvent, 2);
 
   if(DEBUG) cout<<"star event QA"<<endl;
   TVector3 pVtx = picoEvent->primaryVertex();
   
-    mVx = pVtx.x();
-    mVy = pVtx.y();
-    mVz = pVtx.z();
-    mVpdVz = picoEvent->vzVpd();
-    if(QA)h_Vx_Vy->Fill(mVx,mVy);
-    if(QA)hevtcut->Fill(runnum[mRunId]);
-    if(QA)hVz->Fill(mVz);
-    if(QA)hVpdVz->Fill(mVpdVz);
-    if(QA)hVxVyVz->Fill(mVx,mVy,mVz);
-    if(QA)hVr->Fill(sqrt(mVy*mVy+mVx*mVx));
-    if(QA)hVzVpdVz->Fill(mVpdVz-mVz);
-    if(QA)h_Vz_VpdVz->Fill(mVz,mVpdVz);  
+  mVx = pVtx.x();
+  mVy = pVtx.y();
+  mVz = pVtx.z();
+  mVpdVz = picoEvent->vzVpd();
+  if(QA)h_Vx_Vy->Fill(mVx,mVy);
+  if(QA)hevtcut->Fill(runnum[mRunId]);
+  if(QA)hVz->Fill(mVz);
+  if(QA)hVpdVz->Fill(mVpdVz);
+  if(QA)hVxVyVz->Fill(mVx,mVy,mVz);
+  if(QA)hVr->Fill(sqrt(mVy*mVy+mVx*mVx));
+  if(QA)hVzVpdVz->Fill(mVpdVz-mVz);
+  if(QA)h_Vz_VpdVz->Fill(mVz,mVpdVz);  
 
-    if(QA)hnTofMult->Fill(picoEvent->btofTrayMultiplicity());  
-    if(QA)hnTofMulvsRef->Fill(picoEvent->refMult(),picoEvent->btofTrayMultiplicity());  
-    if(QA)hnTofMatch->Fill(picoEvent->nBTOFMatch());  
-    if(QA)hnTofMatvsRef->Fill(picoEvent->refMult(),picoEvent->nBTOFMatch());  
+  if(QA)hnTofMult->Fill(picoEvent->btofTrayMultiplicity());  
+  if(QA)hnTofMulvsRef->Fill(picoEvent->refMult(),picoEvent->btofTrayMultiplicity());  
+  if(QA)hnTofMatch->Fill(picoEvent->nBTOFMatch());  
+  if(QA)hnTofMatvsRef->Fill(picoEvent->refMult(),picoEvent->nBTOFMatch());  
 
-    double ntofhits = 0;
-    //    int ntrack_tof_hits =0; 
-    
-    electroninfo.clear();
-    positroninfo.clear();  
-    int nTracks = picoDst->numberOfTracks();
+  double ntofhits = 0;
+  //    int ntrack_tof_hits =0; 
+  
+  electroninfo.clear();
+  positroninfo.clear();  
+  int nTracks = picoDst->numberOfTracks();
     for (int itrack=0;itrack<nTracks;itrack++){
       StPicoTrack* trk = picoDst->track(itrack);
 
@@ -1127,7 +1181,13 @@ Int_t StPicoDstarMixedMaker::Make()
                     particle2_4V.SetPz(electroninfo[y].p3);
                     particle2_4V.SetE(electroninfo[y].energy);
                     eepair = particle1_4V + particle2_4V;
-                    
+                    double dphi = eepair.Phi() - mEventPlaneV2[2].Phi();
+                    if (dphi < 0) dphi += TMath::TwoPi();
+                    if (dphi > TMath::Pi()) dphi = TMath::TwoPi() - dphi;
+                    double point[4] = {(double)mCent, eepair.Pt(), eepair.M(), dphi};
+                    hJpsi_v2_UL->Fill(point, mWeight);
+                    hJpsi_v2_LSpp->Fill(point, mWeight);
+
                     //if(eepair.Perp()<0.2){hMeeCount_like1->Fill(eepair.M());}
                     hMeeCount_like1->Fill(eepair.M());
                     hMeeCountPt_like1->Fill(eepair.M(),eepair.Perp());
@@ -1149,6 +1209,12 @@ Int_t StPicoDstarMixedMaker::Make()
                     particle2_4V.SetPz(positroninfo[y].p3);
                     particle2_4V.SetE(positroninfo[y].energy);
                     eepair = particle1_4V + particle2_4V;
+                    double dphi = eepair.Phi() - mEventPlaneV2[2].Phi();
+                    if (dphi < 0) dphi += TMath::TwoPi();
+                    if (dphi > TMath::Pi()) dphi = TMath::TwoPi() - dphi;
+                    double point[4] = {(double)mCent, eepair.Pt(), eepair.M(), dphi};
+                    hJpsi_v2_LSnn->Fill(point, mWeight);
+
                     //if(eepair.Perp()<0.2){hMeeCount_like2->Fill(eepair.M());}
                     hMeeCount_like2->Fill(eepair.M());
                     hMeeCountPt_like2->Fill(eepair.M(),eepair.Perp());
@@ -1168,6 +1234,11 @@ Int_t StPicoDstarMixedMaker::Make()
                     particle2_4V.SetPz(electroninfo[y].p3);
                     particle2_4V.SetE(electroninfo[y].energy);
                     eepair = particle1_4V + particle2_4V;
+                    double dphi = eepair.Phi() - mEventPlaneV2[2].Phi();
+                    if (dphi < 0) dphi += TMath::TwoPi();
+                    if (dphi > TMath::Pi()) dphi = TMath::TwoPi() - dphi;
+                    double point[4] = {(double)mCent, eepair.Pt(), eepair.M(), dphi};
+
                     //if(eepair.Perp()<0.2){hMeeCount->Fill(eepair.M());}
                     hMeeCount->Fill(eepair.M());
                     hMeeCountPt->Fill(eepair.M(),eepair.Perp());
@@ -1260,3 +1331,30 @@ float StPicoDstarMixedMaker::getTofBeta(StPicoTrack const* const trk) const
   return beta;
 }
 
+void StPicoDstarMixedMaker::getQVectors(StPicoDst const* picoDst, TVector2 Q[3], int n) const
+{
+    const float eta_gap = 0.05;
+    for(int i=0; i<3; ++i) Q[i].Set(0.,0.);
+
+    const int nTracks = picoDst->numberOfTracks();
+    for (int iTrack = 0; iTrack < nTracks; ++iTrack) {
+        StPicoTrack* mTrack = picoDst->track(iTrack);
+        if (!mTrack || !mTrack->isPrimary()) continue;
+        
+        // Standard event plane track cuts
+        if (fabs(mTrack->nHitsFit()) < 20) continue;
+        const float pt = mTrack->pMom().Perp();
+        if (pt < 0.2 || pt > 2.0) continue;
+        const float eta = mTrack->pMom().Eta();
+        if (fabs(eta) > 1.0) continue;
+        if (mTrack->gDCA(picoDst->event()->primaryVertex()).Mag() > 1.5) continue;
+        
+        const float phi = mTrack->pMom().Phi();
+        const float pt_weight = 1.0; // Use pt for weighting: pt_weight = pt;
+        TVector2 q_vec(pt_weight * cos(n * phi), pt_weight * sin(n * phi));
+
+        if (eta < -eta_gap) Q[0] += q_vec; // Sub-event A: eta < -gap
+        if (eta >  eta_gap) Q[1] += q_vec; // Sub-event B: eta > +gap
+        Q[2] += q_vec;                     // Sub-event C: Full TPC
+    }
+}

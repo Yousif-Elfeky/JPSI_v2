@@ -17,13 +17,23 @@
 #include "TProfile.h"
 #include "TH1.h"
 #include "TH2.h"
+#include "THn.h"
 #include "TH3.h"
+#include "THnSparse.h" 
+
+class TProfile;
 class TString;
 class TFile;
 class TNtuple;
 class StPicoTrack;
 class StPicoDstMaker;
 class StPicoEvent;
+class TProfile2D;
+class TProfile3D;
+class StPicoDst;
+class StRefMultCorr;
+class CentralityMaker;
+
 
 struct ParticleInfo_Electron
 {
@@ -64,7 +74,11 @@ class StPicoDstarMixedMaker : public StMaker
     bool isGoodQaTrack(StPicoTrack const* const trk) const;
     bool isGoodTrack(StPicoTrack const* trk,float dca) const;
     float getTofBeta(StPicoTrack const* const trk) const;
+    void getQVectors(StPicoDst const*, TVector2 Q[3], int n) const;
+    float calcEventPlane(StPicoDst const* const picoDst, StPicoEvent const* picoEvent, const int n) const;
+    TVector2 QEtaGap(int iEta, int nEtaGaps) const;
     StPicoDstMaker* mPicoDstMaker;
+    StRefMultCorr* refmultCorrUtil;
     TString mInputFilesList;
     TString mOutFileBaseName;
     bool isBadrun(Int_t runId);
@@ -98,6 +112,12 @@ class StPicoDstarMixedMaker : public StMaker
     bool QA;
     //Event level
     int  mRunId;
+    int   mCent;        // Centrality bin (0-8)
+    float mWeight;      // Centrality weight
+    TVector2 mEventPlaneV2[3]; // [0]=eta<neg, [1]=eta>pos, [2]=full
+    UInt_t CurrentEvent_Id;
+    float weight;
+
     float mVpdVz;
     float mRefmult;
     float mVpdHitEast;
@@ -310,6 +330,15 @@ class StPicoDstarMixedMaker : public StMaker
   TH2F* h2_TofNsigmaP_vs_p_afterTpcCut;
 
     // =================================================================
+    TH1F* hCentrality;
+    TH1F* hCentrality_noWgt;
+    TH2F* hCos_v2_ab;
+    TH2F* hCos_v2_ac;
+    TH2F* hCos_v2_bc;
+
+    THnSparseF* hJpsi_v2_UL;
+    THnSparseF* hJpsi_v2_LSpp; // Like-sign e+e+
+    THnSparseF* hJpsi_v2_LSnn; // Like-sign e-e-
 
     ClassDef(StPicoDstarMixedMaker, 1)
 };

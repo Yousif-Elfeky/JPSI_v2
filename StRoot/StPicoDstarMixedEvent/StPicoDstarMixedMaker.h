@@ -346,7 +346,9 @@ class StPicoDstarMixedMaker : public StMaker
     THnSparseF* hJpsi_v2_LSnn; // Like-sign e-e-
 
     TTree* mTpcEventPlaneTree;
-    TTree* mLeptonCandidateTree;
+    TTree* mElectronCandidateTree;
+    TTree* mPionCandidateTree;
+    TTree* mKaonCandidateTree;
     // Event-level information
     int   mRunId_T;
     int   mEventId_T;
@@ -372,13 +374,15 @@ class StPicoDstarMixedMaker : public StMaker
     float mPsi2_RandA_T;     // First random sub-event
     float mPsi2_RandB_T;     // Second random sub-event
 
-        TLorentzVector* mLeptonCandidate_T; // The 4-momentum of the track
+    TLorentzVector* mLeptonCandidate_T; // The 4-momentum of the track
     int             mCharge_T;
     float           mDca_T;
     int             mNHitsFit_T;
     float           mNHitsRatio_T;
     float           mNSigmaE_T;
     float           mNSigmaPi_T;
+    float           mNSigmaKaon_T;
+    float           mNSigmaProton_T;
     float           mBeta_T;         // TOF Beta, will be -999 if no TOF match
     
     // --- Private member functions ---

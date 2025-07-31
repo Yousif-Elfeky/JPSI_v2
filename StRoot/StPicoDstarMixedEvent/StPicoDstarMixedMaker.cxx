@@ -344,23 +344,20 @@ void StPicoDstarMixedMaker::initHists(){
     hJpsi_v2_UL->Sumw2(); hJpsi_v2_LSpp->Sumw2(); hJpsi_v2_LSnn->Sumw2();
   }
     mFile->cd();
-    mTpcEventPlaneTree = new TTree("TpcEventPlaneTree", "TPC Event Plane Information");
 
+    mTpcEventPlaneTree = new TTree("TpcEventPlaneTree", "TPC Event Plane Information");
     mTpcEventPlaneTree->Branch("runId",    &mRunId_T,      "runId/I");
     mTpcEventPlaneTree->Branch("eventId",  &mEventId_T,    "eventId/I");
     mTpcEventPlaneTree->Branch("cent9",    &mCent9_T,      "cent9/I");
     mTpcEventPlaneTree->Branch("vz",       &mVz_T,         "vz/F");
-
     mTpcEventPlaneTree->Branch("nTracksFull",   &mNTracks_Full_T,    "nTracksFull/I");
     mTpcEventPlaneTree->Branch("nTracksPosEta", &mNTracks_PosEta_T,  "nTracksPosEta/I");
     mTpcEventPlaneTree->Branch("nTracksNegEta", &mNTracks_NegEta_T,  "nTracksNegEta/I");
-
     mTpcEventPlaneTree->Branch("psi1_Full",    &mPsi1_Full_T,     "psi1_Full/F");
     mTpcEventPlaneTree->Branch("psi1_PosEta",  &mPsi1_PosEta_T,   "psi1_PosEta/F");
     mTpcEventPlaneTree->Branch("psi1_NegEta",  &mPsi1_NegEta_T,   "psi1_NegEta/F");
     mTpcEventPlaneTree->Branch("psi1_RandA",   &mPsi1_RandA_T,    "psi1_RandA/F");
     mTpcEventPlaneTree->Branch("psi1_RandB",   &mPsi1_RandB_T,    "psi1_RandB/F");
-
     mTpcEventPlaneTree->Branch("psi2_Full",    &mPsi2_Full_T,     "psi2_Full/F");
     mTpcEventPlaneTree->Branch("psi2_PosEta",  &mPsi2_PosEta_T,   "psi2_PosEta/F");
     mTpcEventPlaneTree->Branch("psi2_NegEta",  &mPsi2_NegEta_T,   "psi2_NegEta/F");
@@ -368,19 +365,51 @@ void StPicoDstarMixedMaker::initHists(){
     mTpcEventPlaneTree->Branch("psi2_RandB",   &mPsi2_RandB_T,    "psi2_RandB/F");
 
     mLeptonCandidate_T = new TLorentzVector();
-    mLeptonCandidateTree = new TTree("LeptonCandidateTree", "Electron and Positron Candidates");
 
-    mLeptonCandidateTree->Branch("runId",    &mRunId_T,       "runId/I"); 
-    mLeptonCandidateTree->Branch("eventId",  &mEventId_T,     "eventId/I");
-    mLeptonCandidateTree->Branch("cent9",    &mCent9_T,       "cent9/I");
-    mLeptonCandidateTree->Branch("particle", "TLorentzVector", &mLeptonCandidate_T);
-    mLeptonCandidateTree->Branch("charge",   &mCharge_T,      "charge/I");
-    mLeptonCandidateTree->Branch("dca",      &mDca_T,         "dca/F");
-    mLeptonCandidateTree->Branch("nHitsFit", &mNHitsFit_T,    "nHitsFit/I");
-    mLeptonCandidateTree->Branch("nHitsRatio",&mNHitsRatio_T, "nHitsRatio/F");
-    mLeptonCandidateTree->Branch("nSigmaE",  &mNSigmaE_T,     "nSigmaE/F");
-    mLeptonCandidateTree->Branch("nSigmaPi", &mNSigmaPi_T,    "nSigmaPi/F");
-    mLeptonCandidateTree->Branch("beta",     &mBeta_T,        "beta/F");
+    mElectronCandidateTree = new TTree("ElectronCandidateTree", "Electron and Positron Candidates");
+    mElectronCandidateTree->Branch("runId",    &mRunId_T,       "runId/I"); 
+    mElectronCandidateTree->Branch("eventId",  &mEventId_T,     "eventId/I");
+    mElectronCandidateTree->Branch("cent9",    &mCent9_T,       "cent9/I");
+    mElectronCandidateTree->Branch("particle", "TLorentzVector", &mLeptonCandidate_T);
+    mElectronCandidateTree->Branch("charge",   &mCharge_T,      "charge/I");
+    mElectronCandidateTree->Branch("dca",      &mDca_T,         "dca/F");
+    mElectronCandidateTree->Branch("nHitsFit", &mNHitsFit_T,    "nHitsFit/I");
+    mElectronCandidateTree->Branch("nHitsRatio",&mNHitsRatio_T, "nHitsRatio/F");
+    mElectronCandidateTree->Branch("nSigmaE",  &mNSigmaE_T,     "nSigmaE/F");
+    mElectronCandidateTree->Branch("nSigmaPi", &mNSigmaPi_T,    "nSigmaPi/F");
+    mElectronCandidateTree->Branch("nSigmaPi", &mNSigmaKaon_T,    "nSigmaKion/F");
+    mElectronCandidateTree->Branch("nSigmaPi", &mNSigmaProton_T,    "nSigmaProton/F");
+    mElectronCandidateTree->Branch("beta",     &mBeta_T,        "beta/F");
+
+    mPionCandidateTree = new TTree("PionCandidateTree", "Pion +- Candidates");
+    mPionCandidateTree->Branch("runId",    &mRunId_T,       "runId/I"); 
+    mPionCandidateTree->Branch("eventId",  &mEventId_T,     "eventId/I");
+    mPionCandidateTree->Branch("cent9",    &mCent9_T,       "cent9/I");
+    mPionCandidateTree->Branch("particle", "TLorentzVector", &mLeptonCandidate_T);
+    mPionCandidateTree->Branch("charge",   &mCharge_T,      "charge/I");
+    mPionCandidateTree->Branch("dca",      &mDca_T,         "dca/F");
+    mPionCandidateTree->Branch("nHitsFit", &mNHitsFit_T,    "nHitsFit/I");
+    mPionCandidateTree->Branch("nHitsRatio",&mNHitsRatio_T, "nHitsRatio/F");
+    mPionCandidateTree->Branch("nSigmaE",  &mNSigmaE_T,     "nSigmaE/F");
+    mPionCandidateTree->Branch("nSigmaPi", &mNSigmaPi_T,    "nSigmaPi/F");
+    mPionCandidateTree->Branch("nSigmaPi", &mNSigmaKaon_T,  "nSigmaKion/F");
+    mPionCandidateTree->Branch("nSigmaPi", &mNSigmaProton_T,"nSigmaProton/F");
+    mPionCandidateTree->Branch("beta",     &mBeta_T,        "beta/F");
+    
+    mKaonCandidateTree = new TTree("KaonCandidateTree", "Kion +- Candidates");
+    mKaonCandidateTree->Branch("runId",    &mRunId_T,       "runId/I"); 
+    mKaonCandidateTree->Branch("eventId",  &mEventId_T,     "eventId/I");
+    mKaonCandidateTree->Branch("cent9",    &mCent9_T,       "cent9/I");
+    mKaonCandidateTree->Branch("particle", "TLorentzVector", &mLeptonCandidate_T);
+    mKaonCandidateTree->Branch("charge",   &mCharge_T,      "charge/I");
+    mKaonCandidateTree->Branch("dca",      &mDca_T,         "dca/F");
+    mKaonCandidateTree->Branch("nHitsFit", &mNHitsFit_T,    "nHitsFit/I");
+    mKaonCandidateTree->Branch("nHitsRatio",&mNHitsRatio_T, "nHitsRatio/F");
+    mKaonCandidateTree->Branch("nSigmaE",  &mNSigmaE_T,     "nSigmaE/F");
+    mKaonCandidateTree->Branch("nSigmaPi", &mNSigmaPi_T,    "nSigmaPi/F");
+    mKaonCandidateTree->Branch("nSigmaPi", &mNSigmaKaon_T,  "nSigmaKion/F");
+    mKaonCandidateTree->Branch("nSigmaPi", &mNSigmaProton_T,"nSigmaProton/F");
+    mKaonCandidateTree->Branch("beta",     &mBeta_T,        "beta/F");
 
   //tof module id
   /*ModuleId_1 = new TH1F("ModuleId 1","0.8<1/#beta<0.9 0.4<P;ModuleId",40,0,40);
@@ -604,7 +633,9 @@ mFile->cd();
   hJpsi_v2_LSnn->Write();
   }
   mTpcEventPlaneTree->Write();
-  mLeptonCandidateTree->Write();
+  mElectronCandidateTree->Write();
+  mPionCandidateTree-Write();
+  mKaonCandidateTree-Write();
   
   mFile->Close();
 
@@ -1011,7 +1042,7 @@ Int_t StPicoDstarMixedMaker::Make()
       bool tofmatch = (beta!=std::numeric_limits<float>::quiet_NaN()) && beta>0;
       
       double p = mom.Mag();
-     int charge = trk->charge();
+      int charge = trk->charge();
       double nSigmaE = trk->nSigmaElectron();
       double nSigmaPi = trk->nSigmaPion();
       double nSigmaK = trk->nSigmaKaon();
@@ -1028,30 +1059,34 @@ Int_t StPicoDstarMixedMaker::Make()
       if(QA)h_nSigmaVsPcharge_Kaon->Fill(p * charge, nSigmaK);
       if(QA)h_nSigmaVsPcharge_Proton->Fill(p * charge, nSigmaP);
 
-	//choose inclusive electron
-      // bool isTPCElectron =  trk->nSigmaElectron()<2 && trk->nSigmaElectron()>0.75;
-      bool isTPCElectron=0;
-      if (mom.Mag()>0.8) isTPCElectron =  trk->nSigmaElectron()<2 && trk->nSigmaElectron()>-0.75;
-      else isTPCElectron = trk->nSigmaElectron()<2 && trk->nSigmaElectron()>(3*mom.Mag()-3.15);
-      bool isTOFElectron = tofmatch?fabs(1./beta-1.)<0.025:false;
-
+      // PID START
+      bool isTPCElectron = false;
+      bool isTOFElectron = false;
+      if (p>0.8) isTPCElectron =  trk->nSigmaElectron()<2 && trk->nSigmaElectron()>-0.75;
+      else isTPCElectron = trk->nSigmaElectron()<2 && trk->nSigmaElectron()>(3*p-3.15);
+      double oneOverBeta_electron_expected = sqrt(((M_ELECTRON*M_ELECTRON)/(p*p))+1);
+      if(tofmatch && p > 0.1){
+        if(fabs((1./beta)-oneOverBeta_electron_expected)<0.025){
+          isTOFElectron=true;
+        }
+      }
       if(QA)h_nSigmaElectron_P_tpc->Fill(mom.Mag(),trk->nSigmaElectron());      
 
       // --- Pion ---
       bool isTpcPion = fabs(nSigmaPi) < 2.0;
       bool isTofPion = false;
       if (tofmatch && p > 0.1) {
-          float oneOverBeta_pion_expected = sqrt(p * p + M_PION_PLUS * M_PION_PLUS) / p;
-          if (fabs(1.0 / beta - oneOverBeta_pion_expected) < 0.03) {
-              isTofPion = true;
-          }
+        double oneOverBeta_pion_expected = sqrt(((M_PION_PLUS*M_PION_PLUS)/(p*p))+1);
+        if (fabs((1.0 / beta) - oneOverBeta_pion_expected) < 0.03) {
+            isTofPion = true;
+        }
       }
 
       // --- Kaon ---
       bool isTpcKaon = fabs(nSigmaK) < 2.0;
       bool isTofKaon = false;
       if (tofmatch && p > 0.1) {
-          float oneOverBeta_kaon_expected = sqrt(p * p + M_KAON_PLUS * M_KAON_PLUS) / p;
+          double oneOverBeta_kaon_expected = sqrt(((M_KAON_PLUS*M_KAON_PLUS)/(p*p))+1);
           if (fabs(1.0 / beta - oneOverBeta_kaon_expected) < 0.03) {
               isTofKaon = true;
           }
@@ -1061,11 +1096,12 @@ Int_t StPicoDstarMixedMaker::Make()
       bool isTpcProton = fabs(nSigmaP) < 2.0;
       bool isTofProton = false;
       if (tofmatch && p > 0.1) {
-          float oneOverBeta_proton_expected = sqrt(p * p + M_PROTON * M_PROTON) / p;
+          double oneOverBeta_proton_expected = sqrt(((M_PROTON*M_PROTON)/(p*p))+1);
           if (fabs(1.0 / beta - oneOverBeta_proton_expected) < 0.03) {
               isTofProton = true;
           }
       }
+      // PID FINISH
 
       // --- Fill TPC nSigma if TOF cut is passed ---
       if (QA && isTOFElectron) {h_TpcNsigmaE_afterTofCut->Fill(nSigmaE);h2_TpcNsigmaE_vs_p_afterTofCut->Fill(p * charge, nSigmaE);}
@@ -1075,8 +1111,6 @@ Int_t StPicoDstarMixedMaker::Make()
 
 
       if (isTOFElectron && isTPCElectron) {
-        
-        const float p = mom.Mag();
         const float E = sqrt(p*p + M_ELECTRON*M_ELECTRON); 
         mLeptonCandidate_T->SetPxPyPzE(mom.x(), mom.y(), mom.z(), E);
 
@@ -1087,8 +1121,10 @@ Int_t StPicoDstarMixedMaker::Make()
                           static_cast<float>(trk->nHitsFit()) / trk->nHitsMax() : 0;
         mNSigmaE_T    = trk->nSigmaElectron();
         mNSigmaPi_T   = trk->nSigmaPion();
+        mNSigmaKaon_T = trk->nSigmaKaon();
+        mNSigmaProton_T=trk->nSigmaProton();
         mBeta_T       = getTofBeta(trk); 
-        mLeptonCandidateTree->Fill();
+        mElectronCandidateTree->Fill();
 
 
         if(QA)hnEvsEtavsVz->Fill(mom.Eta(),mVz); 
@@ -1145,10 +1181,56 @@ Int_t StPicoDstarMixedMaker::Make()
              current_nEPlus++;*/
         }
       }
-
          //current_nE++;
       }
-      
+      if(isTofPion && isTpcPion){
+        float E = 0;
+
+        if(trk->charge()>0)
+          {E = sqrt(p*p + M_PION_PLUS*M_PION_PLUS);}
+        else if(trk->charge()<0)
+          {E = sqrt(p*p + M_PION_MINUS*M_PION_MINUS);}
+        else
+          {E = sqrt(p*p + M_PION_0*M_PION_0);}
+
+        mLeptonCandidate_T->SetPxPyPzE(mom.x(), mom.y(), mom.z(), E);
+        mCharge_T     = trk->charge();
+        mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
+        mNHitsFit_T   = trk->nHitsFit();
+        mNHitsRatio_T = (trk->nHitsMax() > 0) ?
+                          static_cast<float>(trk->nHitsFit()) / trk->nHitsMax() : 0;
+        mNSigmaE_T    = trk->nSigmaElectron();
+        mNSigmaPi_T   = trk->nSigmaPion();
+        mNSigmaKaon_T = trk->nSigmaKaon();
+        mNSigmaProton_T=trk->nSigmaProton();
+        mBeta_T       = getTofBeta(trk); 
+        mPionCandidateTree->Fill();
+
+      }
+      if(isTofKaon && isTpcKaon){
+        float E = 0;
+        
+        if(trk->charge()>0)
+          {E = sqrt(p*p + M_KAON_PLUS*M_KAON_PLUS);}
+        else if(trk->charge()<0)
+          {E = sqrt(p*p + M_KAON_MINUS*M_KAON_MINUS);}
+        else
+          {E = sqrt(p*p + M_KAON_0_SHORT*M_KAON_0_SHORT);}
+
+        mLeptonCandidate_T->SetPxPyPzE(mom.x(), mom.y(), mom.z(), E);
+        mCharge_T     = trk->charge();
+        mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
+        mNHitsFit_T   = trk->nHitsFit();
+        mNHitsRatio_T = (trk->nHitsMax() > 0) ?
+                          static_cast<float>(trk->nHitsFit()) / trk->nHitsMax() : 0;
+        mNSigmaE_T    = trk->nSigmaElectron();
+        mNSigmaPi_T   = trk->nSigmaPion();
+        mNSigmaKaon_T = trk->nSigmaKaon();
+        mNSigmaProton_T=trk->nSigmaProton();
+        mBeta_T       = getTofBeta(trk); 
+        mPionCandidateTree->Fill();
+      }
+
       if (tofmatch) {
         ntofhits++;
         if(QA)hinvBetavsP->Fill(mom.Mag(),1./beta);

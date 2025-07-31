@@ -1236,6 +1236,8 @@ Int_t StPicoDstarMixedMaker::Make()
     }
     if(QA)hnTofHitvsRef->Fill(ntofhits,picoEvent->refMult());
     
+
+    if(histos){
       int x=0;
       int y=0;
       int num_electron = electroninfo.size();
@@ -1322,7 +1324,7 @@ Int_t StPicoDstarMixedMaker::Make()
                     //if(eepair.Perp()<=10){hMee_Pt_Cent->Fill(eepair.Perp(),mCentrality,eepair.M());}
                   }
          }
-
+        }
 
   } //Good Event
  }

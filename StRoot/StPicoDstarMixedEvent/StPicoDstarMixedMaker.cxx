@@ -343,8 +343,9 @@ void StPicoDstarMixedMaker::initHists(){
 
     hJpsi_v2_UL->Sumw2(); hJpsi_v2_LSpp->Sumw2(); hJpsi_v2_LSnn->Sumw2();
   }
-    mFile->cd();
-
+    // mFile->cd();
+    this->SetBit(TObject::kCanDelete);
+    
     mTpcEventPlaneTree = new TTree("TpcEventPlaneTree", "TPC Event Plane Information");
     mTpcEventPlaneTree->Branch("runId",    &mRunId_T,      "runId/I");
     mTpcEventPlaneTree->Branch("eventId",  &mEventId_T,    "eventId/I");

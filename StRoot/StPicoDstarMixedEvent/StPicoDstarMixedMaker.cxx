@@ -557,6 +557,9 @@ mFile->cd();
   hCos_v2_ab->Write();
   hCos_v2_ac->Write();
   hCos_v2_bc->Write();
+  hCos2dphi_UL->Write();
+  hCos2dphi_LSpp->Write();
+  hCos2dphi_LSnn->Write();
   hJpsi_v2_UL->Write();
   hJpsi_v2_LSpp->Write();
   hJpsi_v2_LSnn->Write();
@@ -833,8 +836,8 @@ Int_t StPicoDstarMixedMaker::Make()
     
     mWeight = refmultCorrUtil->getWeight();
     mRefmult = picoEvent->refMult();
-    // hCentralityWeighted->Fill(mCent, mWeight);
-    // hCentrality_noWgt->Fill(mCent);
+    hCentrality->Fill(mCent, mWeight);
+    hCentrality_noWgt->Fill(mCent);
     // hVpdVz->Fill(mVpdVz, mVz);
     // hVzDiff->Fill(mVpdVz - mVz);
     // --- ADDED FOR V_N ANALYSIS ---

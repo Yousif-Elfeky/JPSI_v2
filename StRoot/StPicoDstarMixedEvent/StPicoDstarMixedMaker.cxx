@@ -877,16 +877,16 @@ Int_t StPicoDstarMixedMaker::Make()
     
     mWeight = refmultCorrUtil->getWeight();
     mRefmult = picoEvent->refMult();
-    hCentrality->Fill(mCent, mWeight);
-    hCentrality_noWgt->Fill(mCent);
+    if(histos)hCentrality->Fill(mCent, mWeight);
+    if(histos)hCentrality_noWgt->Fill(mCent);
     // hVpdVz->Fill(mVpdVz, mVz);
     // hVzDiff->Fill(mVpdVz - mVz);
     // --- ADDED FOR V_N ANALYSIS ---
     getQVectors(picoDst, mEventPlaneV2, 2);
     // Fill profiles for EP resolution calculation
-    hCos_v2_ab->Fill(mCent, cos(2. * (mEventPlaneV2[0].Phi() - mEventPlaneV2[1].Phi())), weight);
-    hCos_v2_ac->Fill(mCent, cos(2. * (mEventPlaneV2[0].Phi() - mEventPlaneV2[2].Phi())), weight);
-    hCos_v2_bc->Fill(mCent, cos(2. * (mEventPlaneV2[1].Phi() - mEventPlaneV2[2].Phi())), weight);
+    if(histos)hCos_v2_ab->Fill(mCent, cos(2. * (mEventPlaneV2[0].Phi() - mEventPlaneV2[1].Phi())), weight);
+    if(histos)hCos_v2_ac->Fill(mCent, cos(2. * (mEventPlaneV2[0].Phi() - mEventPlaneV2[2].Phi())), weight);
+    if(histos)hCos_v2_bc->Fill(mCent, cos(2. * (mEventPlaneV2[1].Phi() - mEventPlaneV2[2].Phi())), weight);
     
 	// float eventPlane = calcEventPlane(picoDst, picoEvent, 2);
   calculateTpcEventPlanes(picoDst);

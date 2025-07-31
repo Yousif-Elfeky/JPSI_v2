@@ -1075,6 +1075,7 @@ Int_t StPicoDstarMixedMaker::Make()
 
 
       if (isTOFElectron && isTPCElectron) {
+        
         const float p = mom.Mag();
         const float E = sqrt(p*p + M_ELECTRON*M_ELECTRON); 
         mLeptonCandidate_T->SetPxPyPzE(mom.x(), mom.y(), mom.z(), E);

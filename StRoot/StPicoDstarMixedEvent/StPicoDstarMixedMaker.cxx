@@ -1190,12 +1190,9 @@ Int_t StPicoDstarMixedMaker::Make()
                     particle2_4V.SetPz(electroninfo[y].p3);
                     particle2_4V.SetE(electroninfo[y].energy);
                     eepair = particle1_4V + particle2_4V;
-                    double dphi = eepair.Phi() - mEventPlaneV2[2].Phi();
-                    if (dphi < 0) dphi += TMath::TwoPi();
-                    if (dphi > TMath::Pi()) dphi = TMath::TwoPi() - dphi;
+                    double dphi = fabs(TVector2::Phi_mpi_pi(eepair.Phi() - mEventPlaneV2[2].Phi()));
                     double point[4] = {(double)mCent, eepair.Pt(), eepair.M(), dphi};
-                    hJpsi_v2_UL->Fill(point, mWeight);
-                    hJpsi_v2_LSpp->Fill(point, mWeight);
+                    hJpsi_v2_LSnn->Fill(point, mWeight);
 
                     //if(eepair.Perp()<0.2){hMeeCount_like1->Fill(eepair.M());}
                     hMeeCount_like1->Fill(eepair.M());
@@ -1218,11 +1215,9 @@ Int_t StPicoDstarMixedMaker::Make()
                     particle2_4V.SetPz(positroninfo[y].p3);
                     particle2_4V.SetE(positroninfo[y].energy);
                     eepair = particle1_4V + particle2_4V;
-                    double dphi = eepair.Phi() - mEventPlaneV2[2].Phi();
-                    if (dphi < 0) dphi += TMath::TwoPi();
-                    if (dphi > TMath::Pi()) dphi = TMath::TwoPi() - dphi;
+                    double dphi = fabs(TVector2::Phi_mpi_pi(eepair.Phi() - mEventPlaneV2[2].Phi()));
                     double point[4] = {(double)mCent, eepair.Pt(), eepair.M(), dphi};
-                    hJpsi_v2_LSnn->Fill(point, mWeight);
+                    hJpsi_v2_LSpp->Fill(point, mWeight);
 
                     //if(eepair.Perp()<0.2){hMeeCount_like2->Fill(eepair.M());}
                     hMeeCount_like2->Fill(eepair.M());
@@ -1243,10 +1238,9 @@ Int_t StPicoDstarMixedMaker::Make()
                     particle2_4V.SetPz(electroninfo[y].p3);
                     particle2_4V.SetE(electroninfo[y].energy);
                     eepair = particle1_4V + particle2_4V;
-                    double dphi = eepair.Phi() - mEventPlaneV2[2].Phi();
-                    if (dphi < 0) dphi += TMath::TwoPi();
-                    if (dphi > TMath::Pi()) dphi = TMath::TwoPi() - dphi;
+                    double dphi = fabs(TVector2::Phi_mpi_pi(eepair.Phi() - mEventPlaneV2[2].Phi()));
                     double point[4] = {(double)mCent, eepair.Pt(), eepair.M(), dphi};
+                    hJpsi_v2_UL->Fill(point, mWeight);
 
                     //if(eepair.Perp()<0.2){hMeeCount->Fill(eepair.M());}
                     hMeeCount->Fill(eepair.M());

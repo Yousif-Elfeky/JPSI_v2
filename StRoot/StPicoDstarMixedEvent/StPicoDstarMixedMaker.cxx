@@ -37,10 +37,12 @@
 #include "TLorentzVector.h"
 #include "TVector3.h"
 #include "THnSparse.h"
+#include "TRandom.h"
 
 #include "StRefMultCorr/StRefMultCorr.h"
 #include "StRefMultCorr/CentralityMaker.h"
 
+bool histos =false;
 bool DEBUG = false;
 
 
@@ -58,10 +60,6 @@ Int_t StPicoDstarMixedMaker::Init()
   //mFile_RunID = new TFile(mOutFileBaseName+".RunID.root","RECREATE");
   //initialize trees
   initHists();
-  if (!hMeeCount) {
-    LOG_ERROR << "hMeeCount histogram was not initialized. Aborting." << endm;
-    return kStFatal; // kStFatal will stop the entire chain.
-  }
   return kStOK;
 }
 //-----------------------------------------------------------------------------
@@ -304,6 +302,7 @@ void StPicoDstarMixedMaker::initHists(){
 
   }
 
+  if(histos){
   //invariant mass electron
   //hMeeCount = new TH1F("hMee","hMee;Count;Mee(GeV/c^{2})",400,0,4);
   hMeeCount = new TH1F("hMee","hMee;Mee(GeV/c^{2})",40000,0,4);
@@ -343,6 +342,45 @@ void StPicoDstarMixedMaker::initHists(){
     hJpsi_v2_LSnn = new THnSparseF("hJpsi_v2_LSnn", TString("Like-sign e-e- ") + axisTitles, nDimensions, bins, xmin, xmax);
 
     hJpsi_v2_UL->Sumw2(); hJpsi_v2_LSpp->Sumw2(); hJpsi_v2_LSnn->Sumw2();
+  }
+    mFile->cd();
+    mTpcEventPlaneTree = new TTree("TpcEventPlaneTree", "TPC Event Plane Information");
+
+    mTpcEventPlaneTree->Branch("runId",    &mRunId_T,      "runId/I");
+    mTpcEventPlaneTree->Branch("eventId",  &mEventId_T,    "eventId/I");
+    mTpcEventPlaneTree->Branch("cent9",    &mCent9_T,      "cent9/I");
+    mTpcEventPlaneTree->Branch("vz",       &mVz_T,         "vz/F");
+
+    mTpcEventPlaneTree->Branch("nTracksFull",   &mNTracks_Full_T,    "nTracksFull/I");
+    mTpcEventPlaneTree->Branch("nTracksPosEta", &mNTracks_PosEta_T,  "nTracksPosEta/I");
+    mTpcEventPlaneTree->Branch("nTracksNegEta", &mNTracks_NegEta_T,  "nTracksNegEta/I");
+
+    mTpcEventPlaneTree->Branch("psi1_Full",    &mPsi1_Full_T,     "psi1_Full/F");
+    mTpcEventPlaneTree->Branch("psi1_PosEta",  &mPsi1_PosEta_T,   "psi1_PosEta/F");
+    mTpcEventPlaneTree->Branch("psi1_NegEta",  &mPsi1_NegEta_T,   "psi1_NegEta/F");
+    mTpcEventPlaneTree->Branch("psi1_RandA",   &mPsi1_RandA_T,    "psi1_RandA/F");
+    mTpcEventPlaneTree->Branch("psi1_RandB",   &mPsi1_RandB_T,    "psi1_RandB/F");
+
+    mTpcEventPlaneTree->Branch("psi2_Full",    &mPsi2_Full_T,     "psi2_Full/F");
+    mTpcEventPlaneTree->Branch("psi2_PosEta",  &mPsi2_PosEta_T,   "psi2_PosEta/F");
+    mTpcEventPlaneTree->Branch("psi2_NegEta",  &mPsi2_NegEta_T,   "psi2_NegEta/F");
+    mTpcEventPlaneTree->Branch("psi2_RandA",   &mPsi2_RandA_T,    "psi2_RandA/F");
+    mTpcEventPlaneTree->Branch("psi2_RandB",   &mPsi2_RandB_T,    "psi2_RandB/F");
+
+    mLeptonCandidate_T = new TLorentzVector();
+    mLeptonCandidateTree = new TTree("LeptonCandidateTree", "Electron and Positron Candidates");
+
+    mLeptonCandidateTree->Branch("runId",    &mRunId_T,       "runId/I"); 
+    mLeptonCandidateTree->Branch("eventId",  &mEventId_T,     "eventId/I");
+    mLeptonCandidateTree->Branch("cent9",    &mCent9_T,       "cent9/I");
+    mLeptonCandidateTree->Branch("particle", "TLorentzVector", &mLeptonCandidate_T);
+    mLeptonCandidateTree->Branch("charge",   &mCharge_T,      "charge/I");
+    mLeptonCandidateTree->Branch("dca",      &mDca_T,         "dca/F");
+    mLeptonCandidateTree->Branch("nHitsFit", &mNHitsFit_T,    "nHitsFit/I");
+    mLeptonCandidateTree->Branch("nHitsRatio",&mNHitsRatio_T, "nHitsRatio/F");
+    mLeptonCandidateTree->Branch("nSigmaE",  &mNSigmaE_T,     "nSigmaE/F");
+    mLeptonCandidateTree->Branch("nSigmaPi", &mNSigmaPi_T,    "nSigmaPi/F");
+    mLeptonCandidateTree->Branch("beta",     &mBeta_T,        "beta/F");
 
   //tof module id
   /*ModuleId_1 = new TH1F("ModuleId 1","0.8<1/#beta<0.9 0.4<P;ModuleId",40,0,40);
@@ -546,6 +584,7 @@ mFile->cd();
   // =================================================================
   // WRITE THE NEW HISTOGRAMS TO THE FILE
   // =================================================================
+  if(histos){
   hMeeCount->Write();
   hMeeCount_like1->Write();
   hMeeCount_like2->Write();
@@ -563,8 +602,10 @@ mFile->cd();
   hJpsi_v2_UL->Write();
   hJpsi_v2_LSpp->Write();
   hJpsi_v2_LSnn->Write();
-  // =================================================================
-
+  }
+  mTpcEventPlaneTree->Write();
+  mLeptonCandidateTree->Write();
+  
   mFile->Close();
 
   /*mFile_RunID->cd();
@@ -848,6 +889,12 @@ Int_t StPicoDstarMixedMaker::Make()
     hCos_v2_bc->Fill(mCent, cos(2. * (mEventPlaneV2[1].Phi() - mEventPlaneV2[2].Phi())), weight);
     
 	// float eventPlane = calcEventPlane(picoDst, picoEvent, 2);
+  calculateTpcEventPlanes(picoDst);
+  mRunId_T   = picoEvent->runId();
+  mEventId_T = picoEvent->eventId();
+  mCent9_T   = mCent;
+  mVz_T      = picoEvent->primaryVertex().z();
+  mTpcEventPlaneTree->Fill();
 
   if(DEBUG) cout<<"star event QA"<<endl;
   TVector3 pVtx = picoEvent->primaryVertex();
@@ -1028,6 +1075,21 @@ Int_t StPicoDstarMixedMaker::Make()
 
 
       if (isTOFElectron && isTPCElectron) {
+        const float p = mom.Mag();
+        const float E = sqrt(p*p + M_ELECTRON*M_ELECTRON); 
+        mLeptonCandidate_T->SetPxPyPzE(mom.x(), mom.y(), mom.z(), E);
+
+        mCharge_T     = trk->charge();
+        mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
+        mNHitsFit_T   = trk->nHitsFit();
+        mNHitsRatio_T = (trk->nHitsMax() > 0) ?
+                          static_cast<float>(trk->nHitsFit()) / trk->nHitsMax() : 0;
+        mNSigmaE_T    = trk->nSigmaElectron();
+        mNSigmaPi_T   = trk->nSigmaPion();
+        mBeta_T       = getTofBeta(trk); 
+        mLeptonCandidateTree->Fill();
+
+
         if(QA)hnEvsEtavsVz->Fill(mom.Eta(),mVz); 
         if(QA)hnEvsPhivsVz->Fill(mom.Phi(),mVz);
         
@@ -1199,12 +1261,12 @@ Int_t StPicoDstarMixedMaker::Make()
                     double dphi = fabs(TVector2::Phi_mpi_pi(eepair.Phi() - mEventPlaneV2[2].Phi()));
                     double point[4] = {(double)mCent, eepair.Pt(), eepair.M(), dphi};
                     double cos2dphi = cos(2 * dphi);
-                    hJpsi_v2_LSnn->Fill(point, mWeight);
-                    hCos2dphi_LSnn->Fill(eepair.M(), cos2dphi, mWeight);
+                    // hJpsi_v2_LSnn->Fill(point, mWeight);
+                    // hCos2dphi_LSnn->Fill(eepair.M(), cos2dphi, mWeight);
 
                     //if(eepair.Perp()<0.2){hMeeCount_like1->Fill(eepair.M());}
-                    hMeeCount_like1->Fill(eepair.M());
-                    hMeeCountPt_like1->Fill(eepair.M(),eepair.Perp());
+                    // hMeeCount_like1->Fill(eepair.M());
+                    // hMeeCountPt_like1->Fill(eepair.M(),eepair.Perp());
 //                    cout<<"debug03"<<endl;
                     //if(eepair.Perp()<=10){hMeelike1_Pt_Cent->Fill(eepair.Perp(),mCentrality,eepair.M());}
                   }
@@ -1225,13 +1287,13 @@ Int_t StPicoDstarMixedMaker::Make()
                     eepair = particle1_4V + particle2_4V;
                     double dphi = fabs(TVector2::Phi_mpi_pi(eepair.Phi() - mEventPlaneV2[2].Phi()));
                     double point[4] = {(double)mCent, eepair.Pt(), eepair.M(), dphi};
-                    double cos2dphi = cos(2 * dphi);
-                    hJpsi_v2_LSpp->Fill(point, mWeight);
-                    hCos2dphi_LSpp->Fill(eepair.M(), cos2dphi, mWeight);
+                    // double cos2dphi = cos(2 * dphi);
+                    // hJpsi_v2_LSpp->Fill(point, mWeight);
+                    // hCos2dphi_LSpp->Fill(eepair.M(), cos2dphi, mWeight);
 
                     //if(eepair.Perp()<0.2){hMeeCount_like2->Fill(eepair.M());}
-                    hMeeCount_like2->Fill(eepair.M());
-                    hMeeCountPt_like2->Fill(eepair.M(),eepair.Perp());
+                    // hMeeCount_like2->Fill(eepair.M());
+                    // hMeeCountPt_like2->Fill(eepair.M(),eepair.Perp());
                     //if(eepair.Perp()<=10){hMeelike2_Pt_Cent->Fill(eepair.Perp(),mCentrality,eepair.M());}
                   }
          }
@@ -1251,12 +1313,12 @@ Int_t StPicoDstarMixedMaker::Make()
                     double dphi = fabs(TVector2::Phi_mpi_pi(eepair.Phi() - mEventPlaneV2[2].Phi()));
                     double point[4] = {(double)mCent, eepair.Pt(), eepair.M(), dphi};
                     double cos2dphi = cos(2 * dphi);
-                    hJpsi_v2_UL->Fill(point, mWeight);
-                    hCos2dphi_UL->Fill(eepair.M(), cos2dphi, mWeight);
+                    // hJpsi_v2_UL->Fill(point, mWeight);
+                    // hCos2dphi_UL->Fill(eepair.M(), cos2dphi, mWeight);
 
                     //if(eepair.Perp()<0.2){hMeeCount->Fill(eepair.M());}
-                    hMeeCount->Fill(eepair.M());
-                    hMeeCountPt->Fill(eepair.M(),eepair.Perp());
+                    // hMeeCount->Fill(eepair.M());
+                    // hMeeCountPt->Fill(eepair.M(),eepair.Perp());
                     //if(eepair.Perp()<=10){hMee_Pt_Cent->Fill(eepair.Perp(),mCentrality,eepair.M());}
                   }
          }
@@ -1374,4 +1436,78 @@ void StPicoDstarMixedMaker::getQVectors(StPicoDst const* picoDst, TVector2 Q[3],
         if (eta >  eta_gap) Q[1] += q_vec; // Sub-event B: eta > +gap
         Q[2] += q_vec;                     // Sub-event C: Full TPC
     }
+}
+
+
+bool StPicoDstarMixedMaker::isGoodEventPlaneTrack(StPicoTrack const* trk) const
+{
+    if (!trk || !trk->isPrimary()) return false;
+
+    const float pt      = trk->pMom().Perp();
+    const float eta     = trk->pMom().Eta();
+    const float dca     = trk->gDCA(mPicoDstMaker->picoDst()->event()->primaryVertex()).Mag();
+    const int nHitsFit  = trk->nHitsFit();
+    const int nHitsMax  = trk->nHitsMax();
+
+    if (pt <= 0.15 || pt > 2.0) return false;
+    if (fabs(eta) > 1.0) return false;
+    if (dca > 2.0) return false;
+    if (nHitsFit < 16) return false;
+    if (nHitsMax > 0 && (static_cast<float>(nHitsFit) / nHitsMax <= 0.52)) return false;
+
+    return true;
+}
+
+void StPicoDstarMixedMaker::calculateTpcEventPlanes(StPicoDst const* picoDst)
+{
+    TVector2 Q1_full(0, 0), Q1_pos_eta(0, 0), Q1_neg_eta(0, 0), Q1_randA(0, 0), Q1_randB(0, 0);
+    TVector2 Q2_full(0, 0), Q2_pos_eta(0, 0), Q2_neg_eta(0, 0), Q2_randA(0, 0), Q2_randB(0, 0);
+    mNTracks_Full_T = 0; mNTracks_PosEta_T = 0; mNTracks_NegEta_T = 0;
+
+    const int nTracks = picoDst->numberOfTracks();
+    for (int iTrack = 0; iTrack < nTracks; ++iTrack)
+    {
+        StPicoTrack* track = picoDst->track(iTrack);
+        if (!isGoodEventPlaneTrack(track)) continue;
+
+        const float eta = track->pMom().Eta();
+        const float phi = track->pMom().Phi();
+
+        const TVector2 q1_vec(TMath::Cos(1 * phi), TMath::Sin(1 * phi));
+        const TVector2 q2_vec(TMath::Cos(2 * phi), TMath::Sin(2 * phi));
+
+        Q1_full += q1_vec;
+        Q2_full += q2_vec;
+        mNTracks_Full_T++;
+
+        if (eta > 0.05) {
+            Q1_pos_eta += q1_vec;
+            Q2_pos_eta += q2_vec;
+            mNTracks_PosEta_T++;
+        } else if (eta < -0.05) {
+            Q1_neg_eta += q1_vec;
+            Q2_neg_eta += q2_vec;
+            mNTracks_NegEta_T++;
+        }
+
+        if (gRandom->Rndm() > 0.5) {
+            Q1_randA += q1_vec;
+            Q2_randA += q2_vec;
+        } else {
+            Q1_randB += q1_vec;
+            Q2_randB += q2_vec;
+        }
+    } // End of track loop
+
+    mPsi1_Full_T    = Q1_full.Phi()    / 1.0;
+    mPsi1_PosEta_T  = Q1_pos_eta.Phi() / 1.0;
+    mPsi1_NegEta_T  = Q1_neg_eta.Phi() / 1.0;
+    mPsi1_RandA_T   = Q1_randA.Phi()   / 1.0;
+    mPsi1_RandB_T   = Q1_randB.Phi()   / 1.0;
+
+    mPsi2_Full_T    = Q2_full.Phi()    / 2.0;
+    mPsi2_PosEta_T  = Q2_pos_eta.Phi() / 2.0;
+    mPsi2_NegEta_T  = Q2_neg_eta.Phi() / 2.0;
+    mPsi2_RandA_T   = Q2_randA.Phi()   / 2.0;
+    mPsi2_RandB_T   = Q2_randB.Phi()   / 2.0;
 }

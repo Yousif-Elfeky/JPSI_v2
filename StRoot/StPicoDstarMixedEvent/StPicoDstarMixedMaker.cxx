@@ -377,8 +377,8 @@ void StPicoDstarMixedMaker::initHists(){
     mElectronCandidateTree->Branch("nHitsRatio",&mNHitsRatio_T, "nHitsRatio/F");
     mElectronCandidateTree->Branch("nSigmaE",  &mNSigmaE_T,     "nSigmaE/F");
     mElectronCandidateTree->Branch("nSigmaPi", &mNSigmaPi_T,    "nSigmaPi/F");
-    mElectronCandidateTree->Branch("nSigmaPi", &mNSigmaKaon_T,    "nSigmaKion/F");
-    mElectronCandidateTree->Branch("nSigmaPi", &mNSigmaProton_T,    "nSigmaProton/F");
+    mElectronCandidateTree->Branch("nSigmaKaon", &mNSigmaKaon_T,    "nSigmaKaon/F");
+    mElectronCandidateTree->Branch("nSigmaProton", &mNSigmaProton_T,    "nSigmaProton/F");
     mElectronCandidateTree->Branch("beta",     &mBeta_T,        "beta/F");
 
     mPionCandidateTree = new TTree("PionCandidateTree", "Pion Plus Minus Candidates");
@@ -392,8 +392,8 @@ void StPicoDstarMixedMaker::initHists(){
     mPionCandidateTree->Branch("nHitsRatio",&mNHitsRatio_T, "nHitsRatio/F");
     mPionCandidateTree->Branch("nSigmaE",  &mNSigmaE_T,     "nSigmaE/F");
     mPionCandidateTree->Branch("nSigmaPi", &mNSigmaPi_T,    "nSigmaPi/F");
-    mPionCandidateTree->Branch("nSigmaPi", &mNSigmaKaon_T,  "nSigmaKion/F");
-    mPionCandidateTree->Branch("nSigmaPi", &mNSigmaProton_T,"nSigmaProton/F");
+    mPionCandidateTree->Branch("nSigmaKaon", &mNSigmaKaon_T,  "nSigmaKaon/F");
+    mPionCandidateTree->Branch("nSigmaProton", &mNSigmaProton_T,"nSigmaProton/F");
     mPionCandidateTree->Branch("beta",     &mBeta_T,        "beta/F");
     
     mKaonCandidateTree = new TTree("KaonCandidateTree", "Kion Plus Minus Candidates");
@@ -407,8 +407,8 @@ void StPicoDstarMixedMaker::initHists(){
     mKaonCandidateTree->Branch("nHitsRatio",&mNHitsRatio_T, "nHitsRatio/F");
     mKaonCandidateTree->Branch("nSigmaE",  &mNSigmaE_T,     "nSigmaE/F");
     mKaonCandidateTree->Branch("nSigmaPi", &mNSigmaPi_T,    "nSigmaPi/F");
-    mKaonCandidateTree->Branch("nSigmaPi", &mNSigmaKaon_T,  "nSigmaKion/F");
-    mKaonCandidateTree->Branch("nSigmaPi", &mNSigmaProton_T,"nSigmaProton/F");
+    mKaonCandidateTree->Branch("nSigmaKaon", &mNSigmaKaon_T,  "nSigmaKaon/F");
+    mKaonCandidateTree->Branch("nSigmaProton", &mNSigmaProton_T,"nSigmaProton/F");
     mKaonCandidateTree->Branch("beta",     &mBeta_T,        "beta/F");
 
   //tof module id

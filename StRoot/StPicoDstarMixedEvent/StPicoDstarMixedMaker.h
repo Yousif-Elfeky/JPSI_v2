@@ -355,28 +355,26 @@ class StPicoDstarMixedMaker : public StMaker
     int   mCent9_T;
     float mVz_T;
 
-    // Number of tracks used for event plane calculation
     int   mNTracks_Full_T;
     int   mNTracks_PosEta_T;
     int   mNTracks_NegEta_T;
 
-    // --- v1 (Directed Flow) Event Planes (Psi_1) ---
-    float mPsi1_Full_T;      // Full TPC
-    float mPsi1_PosEta_T;    // Positive eta sub-event
-    float mPsi1_NegEta_T;    // Negative eta sub-event
-    float mPsi1_RandA_T;     // First random sub-event
-    float mPsi1_RandB_T;     // Second random sub-event
+    float mPsi1_Full_T;  
+    float mPsi1_PosEta_T;
+    float mPsi1_NegEta_T;
+    float mPsi1_RandA_T; 
+    float mPsi1_RandB_T; 
 
-    // --- v2 (Elliptic Flow) Event Planes (Psi_2) ---
-    float mPsi2_Full_T;      // Full TPC
-    float mPsi2_PosEta_T;    // Positive eta sub-event
-    float mPsi2_NegEta_T;    // Negative eta sub-event
-    float mPsi2_RandA_T;     // First random sub-event
-    float mPsi2_RandB_T;     // Second random sub-event
+    
+    float mPsi2_Full_T; 
+    float mPsi2_PosEta_T;
+    float mPsi2_NegEta_T;
+    float mPsi2_RandA_T;
+    float mPsi2_RandB_T;
 
-    TLorentzVector* mLeptonCandidate_T; // The 4-momentum of the track
-    int             mCharge_T;
+    short             mCharge_T;
     float           mDca_T;
+    float mPt_T, mEta_T, mPhi_T, mE_T;
     
     // --- Private member functions ---
     void  calculateTpcEventPlanes(StPicoDst const* picoDst);

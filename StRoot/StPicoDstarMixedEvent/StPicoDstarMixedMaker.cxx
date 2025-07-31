@@ -364,30 +364,38 @@ void StPicoDstarMixedMaker::initHists(){
     mTpcEventPlaneTree->Branch("psi2_RandA",   &mPsi2_RandA_T,    "psi2_RandA/F");
     mTpcEventPlaneTree->Branch("psi2_RandB",   &mPsi2_RandB_T,    "psi2_RandB/F");
 
-    mLeptonCandidate_T = new TLorentzVector();
 
     mElectronCandidateTree = new TTree("ElectronCandidateTree", "Electron and Positron Candidates");
     mElectronCandidateTree->Branch("runId",    &mRunId_T,       "runId/I"); 
     mElectronCandidateTree->Branch("eventId",  &mEventId_T,     "eventId/I");
     mElectronCandidateTree->Branch("cent9",    &mCent9_T,       "cent9/I");
-    mElectronCandidateTree->Branch("particle", "TLorentzVector", &mLeptonCandidate_T);
-    mElectronCandidateTree->Branch("charge",   &mCharge_T,      "charge/I");
+    mElectronCandidateTree->Branch("pt",       &mPt_T,          "pt/F");
+    mElectronCandidateTree->Branch("eta",      &mEta_T,         "eta/F");
+    mElectronCandidateTree->Branch("phi",      &mPhi_T,         "phi/F");
+    mElectronCandidateTree->Branch("E",        &mE_T,           "E/F");
+    mElectronCandidateTree->Branch("charge",   &mCharge_T,      "charge/S");
     mElectronCandidateTree->Branch("dca",      &mDca_T,         "dca/F");
 
     mPionCandidateTree = new TTree("PionCandidateTree", "Pion Plus Minus Candidates");
     mPionCandidateTree->Branch("runId",    &mRunId_T,       "runId/I"); 
     mPionCandidateTree->Branch("eventId",  &mEventId_T,     "eventId/I");
     mPionCandidateTree->Branch("cent9",    &mCent9_T,       "cent9/I");
-    mPionCandidateTree->Branch("particle", "TLorentzVector", &mLeptonCandidate_T);
-    mPionCandidateTree->Branch("charge",   &mCharge_T,      "charge/I");
+    mPionCandidateTree->Branch("pt",       &mPt_T,          "pt/F");
+    mPionCandidateTree->Branch("eta",      &mEta_T,         "eta/F");
+    mPionCandidateTree->Branch("phi",      &mPhi_T,         "phi/F");
+    mPionCandidateTree->Branch("E",        &mE_T,           "E/F");
+    mPionCandidateTree->Branch("charge",   &mCharge_T,      "charge/S");
     mPionCandidateTree->Branch("dca",      &mDca_T,         "dca/F");
     
     mKaonCandidateTree = new TTree("KaonCandidateTree", "Kion Plus Minus Candidates");
     mKaonCandidateTree->Branch("runId",    &mRunId_T,       "runId/I"); 
     mKaonCandidateTree->Branch("eventId",  &mEventId_T,     "eventId/I");
     mKaonCandidateTree->Branch("cent9",    &mCent9_T,       "cent9/I");
-    mKaonCandidateTree->Branch("particle", "TLorentzVector", &mLeptonCandidate_T);
-    mKaonCandidateTree->Branch("charge",   &mCharge_T,      "charge/I");
+    mKaonCandidateTree->Branch("pt",       &mPt_T,          "pt/F");
+    mKaonCandidateTree->Branch("eta",      &mEta_T,         "eta/F");
+    mKaonCandidateTree->Branch("phi",      &mPhi_T,         "phi/F");
+    mKaonCandidateTree->Branch("E",        &mE_T,           "E/F");
+    mKaonCandidateTree->Branch("charge",   &mCharge_T,      "charge/S");
     mKaonCandidateTree->Branch("dca",      &mDca_T,         "dca/F");
 
   //tof module id
@@ -1091,8 +1099,10 @@ Int_t StPicoDstarMixedMaker::Make()
 
       if (isTOFElectron && isTPCElectron) {
         const float E = sqrt(p*p + M_ELECTRON*M_ELECTRON); 
-        mLeptonCandidate_T->SetPxPyPzE(mom.x(), mom.y(), mom.z(), E);
-
+        mE_T      = E;
+        mPt_T     = mom.Perp();
+        mEta_T    = mom.Eta();
+        mPhi_T    = mom.Phi();
         mCharge_T     = trk->charge();
         mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
         mElectronCandidateTree->Fill();
@@ -1164,7 +1174,10 @@ Int_t StPicoDstarMixedMaker::Make()
         else
           {E = sqrt(p*p + M_PION_0*M_PION_0);}
 
-        mLeptonCandidate_T->SetPxPyPzE(mom.x(), mom.y(), mom.z(), E);
+        mE_T      = E;
+        mPt_T     = mom.Perp();
+        mEta_T    = mom.Eta();
+        mPhi_T    = mom.Phi();
         mCharge_T     = trk->charge();
         mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
         mPionCandidateTree->Fill();
@@ -1180,7 +1193,10 @@ Int_t StPicoDstarMixedMaker::Make()
         else
           {E = sqrt(p*p + M_KAON_0_SHORT*M_KAON_0_SHORT);}
 
-        mLeptonCandidate_T->SetPxPyPzE(mom.x(), mom.y(), mom.z(), E);
+        mE_T      = E;
+        mPt_T     = mom.Perp();
+        mEta_T    = mom.Eta();
+        mPhi_T    = mom.Phi();
         mCharge_T     = trk->charge();
         mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
         mKaonCandidateTree->Fill();

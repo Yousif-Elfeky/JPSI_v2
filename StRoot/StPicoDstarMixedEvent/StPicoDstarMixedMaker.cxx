@@ -324,7 +324,7 @@ void StPicoDstarMixedMaker::initHists(){
     const int nDimensions = 4;
     
     // Number of bins for each dimension
-    int bins[nDimensions] = { 9, 25, 150, 20 };
+    int bins[nDimensions] = { 9, 200, 40000, 200 };
     
     // Minimum value for each dimension's axis
     double xmin[nDimensions] = { -0.5, 0.0, 0.0, 0.0 };
@@ -1348,18 +1348,20 @@ void StPicoDstarMixedMaker::getQVectors(StPicoDst const* picoDst, TVector2 Q[3],
     const int nTracks = picoDst->numberOfTracks();
     for (int iTrack = 0; iTrack < nTracks; ++iTrack) {
         StPicoTrack* mTrack = picoDst->track(iTrack);
-        if (!mTrack || !mTrack->isPrimary()) continue;
+        if (!mTrack || !mTrack->isPrimary() || 
+            !isGoodTrack(mTrack,mTrack->gDCA(picoDst->event()->primaryVertex()).Mag())) continue;
         
-        // Standard event plane track cuts
-        if (fabs(mTrack->nHitsFit()) < 20) continue;
-        const float pt = mTrack->pMom().Perp();
-        if (pt < 0.2 || pt > 2.0) continue;
         const float eta = mTrack->pMom().Eta();
-        if (fabs(eta) > 1.0) continue;
-        if (mTrack->gDCA(picoDst->event()->primaryVertex()).Mag() > 1.5) continue;
+        const float pt = mTrack->pMom().Perp();
+        
+        // // Standard event plane track cuts
+        // if (fabs(mTrack->nHitsFit()) < 20) continue;
+        // if (pt < 0.2 || pt > 2.0) continue;
+        // if (fabs(eta) > 1.0) continue;
+        // if (mTrack->gDCA(picoDst->event()->primaryVertex()).Mag() > 1.5) continue;
         
         const float phi = mTrack->pMom().Phi();
-        const float pt_weight = 1.0; // Use pt for weighting: pt_weight = pt;
+        const float pt_weight = pt; // Use pt for weighting: pt_weight = pt;
         TVector2 q_vec(pt_weight * cos(n * phi), pt_weight * sin(n * phi));
 
         if (eta < -eta_gap) Q[0] += q_vec; // Sub-event A: eta < -gap

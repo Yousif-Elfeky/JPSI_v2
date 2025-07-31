@@ -1228,7 +1228,7 @@ Int_t StPicoDstarMixedMaker::Make()
         mNSigmaKaon_T = trk->nSigmaKaon();
         mNSigmaProton_T=trk->nSigmaProton();
         mBeta_T       = getTofBeta(trk); 
-        mPionCandidateTree->Fill();
+        mKaonCandidateTree->Fill();
       }
 
       if (tofmatch) {

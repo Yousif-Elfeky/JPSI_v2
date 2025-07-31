@@ -320,6 +320,9 @@ void StPicoDstarMixedMaker::initHists(){
     hCos_v2_ab = new TH2F("hCos_v2_ab", "cos(2(#Psi_{a}-#Psi_{b})) vs Centrality;Centrality;cos(2#Delta#Psi_{ab})", 9, -0.5, 8.5, 200, -1.05, 1.05);
     hCos_v2_ac = new TH2F("hCos_v2_ac", "cos(2(#Psi_{a}-#Psi_{c})) vs Centrality;Centrality;cos(2#Delta#Psi_{ac})", 9, -0.5, 8.5, 200, -1.05, 1.05);
     hCos_v2_bc = new TH2F("hCos_v2_bc", "cos(2(#Psi_{b}-#Psi_{c})) vs Centrality;Centrality;cos(2#Delta#Psi_{bc})", 9, -0.5, 8.5, 200, -1.05, 1.05);
+    hCos2dphi_UL = new TH2F("hCos2dphi_UL", "cos(2#Delta#phi) vs Mass;Mass (GeV/c^{2});cos(2#Delta#phi)", 400, 0, 4, 200, -1.1, 1.1);
+    hCos2dphi_LSpp = new TH2F("hCos2dphi_LSpp", "cos(2#Delta#phi) vs Mass;Mass (GeV/c^{2});cos(2#Delta#phi)", 400, 0, 4, 200, -1.1, 1.1);
+    hCos2dphi_LSnn = new TH2F("hCos2dphi_LSnn", "cos(2#Delta#phi) vs Mass;Mass (GeV/c^{2});cos(2#Delta#phi)", 400, 0, 4, 200, -1.1, 1.1);
 
     const int nDimensions = 4;
     
@@ -1192,7 +1195,9 @@ Int_t StPicoDstarMixedMaker::Make()
                     eepair = particle1_4V + particle2_4V;
                     double dphi = fabs(TVector2::Phi_mpi_pi(eepair.Phi() - mEventPlaneV2[2].Phi()));
                     double point[4] = {(double)mCent, eepair.Pt(), eepair.M(), dphi};
+                    double cos2dphi = cos(2 * dphi);
                     hJpsi_v2_LSnn->Fill(point, mWeight);
+                    hCos2dphi_LSnn->Fill(eepair.M(), cos2dphi, mWeight);
 
                     //if(eepair.Perp()<0.2){hMeeCount_like1->Fill(eepair.M());}
                     hMeeCount_like1->Fill(eepair.M());
@@ -1217,7 +1222,9 @@ Int_t StPicoDstarMixedMaker::Make()
                     eepair = particle1_4V + particle2_4V;
                     double dphi = fabs(TVector2::Phi_mpi_pi(eepair.Phi() - mEventPlaneV2[2].Phi()));
                     double point[4] = {(double)mCent, eepair.Pt(), eepair.M(), dphi};
+                    double cos2dphi = cos(2 * dphi);
                     hJpsi_v2_LSpp->Fill(point, mWeight);
+                    hCos2dphi_LSpp->Fill(eepair.M(), cos2dphi, mWeight);
 
                     //if(eepair.Perp()<0.2){hMeeCount_like2->Fill(eepair.M());}
                     hMeeCount_like2->Fill(eepair.M());
@@ -1240,7 +1247,9 @@ Int_t StPicoDstarMixedMaker::Make()
                     eepair = particle1_4V + particle2_4V;
                     double dphi = fabs(TVector2::Phi_mpi_pi(eepair.Phi() - mEventPlaneV2[2].Phi()));
                     double point[4] = {(double)mCent, eepair.Pt(), eepair.M(), dphi};
+                    double cos2dphi = cos(2 * dphi);
                     hJpsi_v2_UL->Fill(point, mWeight);
+                    hCos2dphi_UL->Fill(eepair.M(), cos2dphi, mWeight);
 
                     //if(eepair.Perp()<0.2){hMeeCount->Fill(eepair.M());}
                     hMeeCount->Fill(eepair.M());

@@ -335,6 +335,9 @@ class StPicoDstarMixedMaker : public StMaker
     TH2F* hCos_v2_ab;
     TH2F* hCos_v2_ac;
     TH2F* hCos_v2_bc;
+    TH2F* hCos2dphi_UL;
+    TH2F* hCos2dphi_LSpp;
+    TH2F* hCos2dphi_LSnn;
 
     THnSparseF* hJpsi_v2_UL;
     THnSparseF* hJpsi_v2_LSpp; // Like-sign e+e+

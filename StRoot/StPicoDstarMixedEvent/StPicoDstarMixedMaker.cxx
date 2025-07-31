@@ -373,13 +373,6 @@ void StPicoDstarMixedMaker::initHists(){
     mElectronCandidateTree->Branch("particle", "TLorentzVector", &mLeptonCandidate_T);
     mElectronCandidateTree->Branch("charge",   &mCharge_T,      "charge/I");
     mElectronCandidateTree->Branch("dca",      &mDca_T,         "dca/F");
-    mElectronCandidateTree->Branch("nHitsFit", &mNHitsFit_T,    "nHitsFit/I");
-    mElectronCandidateTree->Branch("nHitsRatio",&mNHitsRatio_T, "nHitsRatio/F");
-    mElectronCandidateTree->Branch("nSigmaE",  &mNSigmaE_T,     "nSigmaE/F");
-    mElectronCandidateTree->Branch("nSigmaPi", &mNSigmaPi_T,    "nSigmaPi/F");
-    mElectronCandidateTree->Branch("nSigmaKaon", &mNSigmaKaon_T,    "nSigmaKaon/F");
-    mElectronCandidateTree->Branch("nSigmaProton", &mNSigmaProton_T,    "nSigmaProton/F");
-    mElectronCandidateTree->Branch("beta",     &mBeta_T,        "beta/F");
 
     mPionCandidateTree = new TTree("PionCandidateTree", "Pion Plus Minus Candidates");
     mPionCandidateTree->Branch("runId",    &mRunId_T,       "runId/I"); 
@@ -388,13 +381,6 @@ void StPicoDstarMixedMaker::initHists(){
     mPionCandidateTree->Branch("particle", "TLorentzVector", &mLeptonCandidate_T);
     mPionCandidateTree->Branch("charge",   &mCharge_T,      "charge/I");
     mPionCandidateTree->Branch("dca",      &mDca_T,         "dca/F");
-    mPionCandidateTree->Branch("nHitsFit", &mNHitsFit_T,    "nHitsFit/I");
-    mPionCandidateTree->Branch("nHitsRatio",&mNHitsRatio_T, "nHitsRatio/F");
-    mPionCandidateTree->Branch("nSigmaE",  &mNSigmaE_T,     "nSigmaE/F");
-    mPionCandidateTree->Branch("nSigmaPi", &mNSigmaPi_T,    "nSigmaPi/F");
-    mPionCandidateTree->Branch("nSigmaKaon", &mNSigmaKaon_T,  "nSigmaKaon/F");
-    mPionCandidateTree->Branch("nSigmaProton", &mNSigmaProton_T,"nSigmaProton/F");
-    mPionCandidateTree->Branch("beta",     &mBeta_T,        "beta/F");
     
     mKaonCandidateTree = new TTree("KaonCandidateTree", "Kion Plus Minus Candidates");
     mKaonCandidateTree->Branch("runId",    &mRunId_T,       "runId/I"); 
@@ -403,13 +389,6 @@ void StPicoDstarMixedMaker::initHists(){
     mKaonCandidateTree->Branch("particle", "TLorentzVector", &mLeptonCandidate_T);
     mKaonCandidateTree->Branch("charge",   &mCharge_T,      "charge/I");
     mKaonCandidateTree->Branch("dca",      &mDca_T,         "dca/F");
-    mKaonCandidateTree->Branch("nHitsFit", &mNHitsFit_T,    "nHitsFit/I");
-    mKaonCandidateTree->Branch("nHitsRatio",&mNHitsRatio_T, "nHitsRatio/F");
-    mKaonCandidateTree->Branch("nSigmaE",  &mNSigmaE_T,     "nSigmaE/F");
-    mKaonCandidateTree->Branch("nSigmaPi", &mNSigmaPi_T,    "nSigmaPi/F");
-    mKaonCandidateTree->Branch("nSigmaKaon", &mNSigmaKaon_T,  "nSigmaKaon/F");
-    mKaonCandidateTree->Branch("nSigmaProton", &mNSigmaProton_T,"nSigmaProton/F");
-    mKaonCandidateTree->Branch("beta",     &mBeta_T,        "beta/F");
 
   //tof module id
   /*ModuleId_1 = new TH1F("ModuleId 1","0.8<1/#beta<0.9 0.4<P;ModuleId",40,0,40);
@@ -1116,14 +1095,6 @@ Int_t StPicoDstarMixedMaker::Make()
 
         mCharge_T     = trk->charge();
         mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
-        mNHitsFit_T   = trk->nHitsFit();
-        mNHitsRatio_T = (trk->nHitsMax() > 0) ?
-                          static_cast<float>(trk->nHitsFit()) / trk->nHitsMax() : 0;
-        mNSigmaE_T    = trk->nSigmaElectron();
-        mNSigmaPi_T   = trk->nSigmaPion();
-        mNSigmaKaon_T = trk->nSigmaKaon();
-        mNSigmaProton_T=trk->nSigmaProton();
-        mBeta_T       = getTofBeta(trk); 
         mElectronCandidateTree->Fill();
 
 
@@ -1196,14 +1167,6 @@ Int_t StPicoDstarMixedMaker::Make()
         mLeptonCandidate_T->SetPxPyPzE(mom.x(), mom.y(), mom.z(), E);
         mCharge_T     = trk->charge();
         mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
-        mNHitsFit_T   = trk->nHitsFit();
-        mNHitsRatio_T = (trk->nHitsMax() > 0) ?
-                          static_cast<float>(trk->nHitsFit()) / trk->nHitsMax() : 0;
-        mNSigmaE_T    = trk->nSigmaElectron();
-        mNSigmaPi_T   = trk->nSigmaPion();
-        mNSigmaKaon_T = trk->nSigmaKaon();
-        mNSigmaProton_T=trk->nSigmaProton();
-        mBeta_T       = getTofBeta(trk); 
         mPionCandidateTree->Fill();
 
       }
@@ -1220,14 +1183,6 @@ Int_t StPicoDstarMixedMaker::Make()
         mLeptonCandidate_T->SetPxPyPzE(mom.x(), mom.y(), mom.z(), E);
         mCharge_T     = trk->charge();
         mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
-        mNHitsFit_T   = trk->nHitsFit();
-        mNHitsRatio_T = (trk->nHitsMax() > 0) ?
-                          static_cast<float>(trk->nHitsFit()) / trk->nHitsMax() : 0;
-        mNSigmaE_T    = trk->nSigmaElectron();
-        mNSigmaPi_T   = trk->nSigmaPion();
-        mNSigmaKaon_T = trk->nSigmaKaon();
-        mNSigmaProton_T=trk->nSigmaProton();
-        mBeta_T       = getTofBeta(trk); 
         mKaonCandidateTree->Fill();
       }
 

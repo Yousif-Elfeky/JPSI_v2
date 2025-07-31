@@ -377,13 +377,6 @@ class StPicoDstarMixedMaker : public StMaker
     TLorentzVector* mLeptonCandidate_T; // The 4-momentum of the track
     int             mCharge_T;
     float           mDca_T;
-    int             mNHitsFit_T;
-    float           mNHitsRatio_T;
-    float           mNSigmaE_T;
-    float           mNSigmaPi_T;
-    float           mNSigmaKaon_T;
-    float           mNSigmaProton_T;
-    float           mBeta_T;         // TOF Beta, will be -999 if no TOF match
     
     // --- Private member functions ---
     void  calculateTpcEventPlanes(StPicoDst const* picoDst);

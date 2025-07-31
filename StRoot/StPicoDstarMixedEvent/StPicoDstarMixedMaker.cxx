@@ -381,7 +381,7 @@ void StPicoDstarMixedMaker::initHists(){
     mElectronCandidateTree->Branch("nSigmaPi", &mNSigmaProton_T,    "nSigmaProton/F");
     mElectronCandidateTree->Branch("beta",     &mBeta_T,        "beta/F");
 
-    mPionCandidateTree = new TTree("PionCandidateTree", "Pion +- Candidates");
+    mPionCandidateTree = new TTree("PionCandidateTree", "Pion Plus Minus Candidates");
     mPionCandidateTree->Branch("runId",    &mRunId_T,       "runId/I"); 
     mPionCandidateTree->Branch("eventId",  &mEventId_T,     "eventId/I");
     mPionCandidateTree->Branch("cent9",    &mCent9_T,       "cent9/I");
@@ -396,7 +396,7 @@ void StPicoDstarMixedMaker::initHists(){
     mPionCandidateTree->Branch("nSigmaPi", &mNSigmaProton_T,"nSigmaProton/F");
     mPionCandidateTree->Branch("beta",     &mBeta_T,        "beta/F");
     
-    mKaonCandidateTree = new TTree("KaonCandidateTree", "Kion +- Candidates");
+    mKaonCandidateTree = new TTree("KaonCandidateTree", "Kion Plus Minus Candidates");
     mKaonCandidateTree->Branch("runId",    &mRunId_T,       "runId/I"); 
     mKaonCandidateTree->Branch("eventId",  &mEventId_T,     "eventId/I");
     mKaonCandidateTree->Branch("cent9",    &mCent9_T,       "cent9/I");

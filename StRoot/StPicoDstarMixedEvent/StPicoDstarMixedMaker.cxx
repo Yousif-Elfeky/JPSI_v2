@@ -338,7 +338,7 @@ void StPicoDstarMixedMaker::initHists(){
     const char* axisTitles = ";Centrality;p_{T} (GeV/c);Mass (GeV/c^{2});#Delta#phi_{2}";
 
     // Now, create the histograms using these clear definitions
-    hJpsi_v2_UL   = new THnF("hJpsi_v2_UL",   TString("Unlike-sign ") + axisTitles, nDimensions, bins, xmin, xmax);
+    hJpsi_v2_UL   = new THnSparseF("hJpsi_v2_UL",   TString("Unlike-sign ") + axisTitles, nDimensions, bins, xmin, xmax);
     hJpsi_v2_LSpp = new THnSparseF("hJpsi_v2_LSpp", TString("Like-sign e+e+ ") + axisTitles, nDimensions, bins, xmin, xmax);
     hJpsi_v2_LSnn = new THnSparseF("hJpsi_v2_LSnn", TString("Like-sign e-e- ") + axisTitles, nDimensions, bins, xmin, xmax);
 

@@ -21,7 +21,6 @@
 #include "TH3.h"
 #include "THnSparse.h" 
 #include "TVector2.h"
-
 class TProfile;
 class TString;
 class TFile;
@@ -340,7 +339,7 @@ class StPicoDstarMixedMaker : public StMaker
     TH2F* hCos2dphi_LSpp;
     TH2F* hCos2dphi_LSnn;
 
-    THnF* hJpsi_v2_UL;
+    THnSparseF* hJpsi_v2_UL;
     THnSparseF* hJpsi_v2_LSpp; // Like-sign e+e+
     THnSparseF* hJpsi_v2_LSnn; // Like-sign e-e-
 

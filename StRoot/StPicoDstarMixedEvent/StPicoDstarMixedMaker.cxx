@@ -1096,6 +1096,7 @@ Int_t StPicoDstarMixedMaker::Make()
         if(QA)p_nSigmaE->Fill(runnum[mRunId],trk->nSigmaElectron());
         //p_nSigmaTofE->Fill(runnum[mRunId],pbtofnSigmaE);
         
+        if(histos){
         if(trk->charge()<0 && tofmatch)
          {
             particleinfo.charge = trk->charge();
@@ -1142,6 +1143,7 @@ Int_t StPicoDstarMixedMaker::Make()
              current_ePlus[current_nEPlus].SetE(sqrt(pow(M_electron,2.0)+pow(mom.Mag(),2.0)));
              current_nEPlus++;*/
         }
+      }
 
          //current_nE++;
       }

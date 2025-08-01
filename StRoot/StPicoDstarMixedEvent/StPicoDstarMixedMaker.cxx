@@ -43,6 +43,7 @@
 #include "StRefMultCorr/CentralityMaker.h"
 
 bool histos =false;
+bool trees =false;
 bool DEBUG = false;
 
 
@@ -345,6 +346,7 @@ void StPicoDstarMixedMaker::initHists(){
   }
     // mFile->cd();
 
+    if(trees){
     mTpcEventPlaneTree = new TTree("TpcEventPlaneTree", "TPC Event Plane Information");
     mTpcEventPlaneTree->Branch("runId",    &mRunId_T,      "runId/I");
     mTpcEventPlaneTree->Branch("eventId",  &mEventId_T,    "eventId/I");
@@ -405,7 +407,7 @@ void StPicoDstarMixedMaker::initHists(){
     mKaonCandidateTree->Branch("vertexX",  &mVertexX_T,     "vertexX/F");
     mKaonCandidateTree->Branch("vertexY",  &mVertexY_T,     "vertexY/F");
     mKaonCandidateTree->Branch("vertexZ",  &mVertexZ_T,     "vertexZ/F");
-
+    }
   //tof module id
   /*ModuleId_1 = new TH1F("ModuleId 1","0.8<1/#beta<0.9 0.4<P;ModuleId",40,0,40);
   TofId_1 = new TH1F("TofId 1","0.8<1/#beta<0.9 0.4<P;TofId",23100,0,23100);
@@ -627,11 +629,12 @@ mFile->cd();
   hJpsi_v2_LSpp->Write();
   hJpsi_v2_LSnn->Write();
   }
+  if(trees){
   mTpcEventPlaneTree->Write();
   mElectronCandidateTree->Write();
   mPionCandidateTree->Write();
   mKaonCandidateTree->Write();
-  
+  }
   mFile->Close();
 
   /*mFile_RunID->cd();
@@ -917,13 +920,14 @@ Int_t StPicoDstarMixedMaker::Make()
     if(histos)hCos_v2_bc->Fill(mCent, cos(2. * (mEventPlaneV2[1].Phi() - mEventPlaneV2[2].Phi())), weight);
     
 	// float eventPlane = calcEventPlane(picoDst, picoEvent, 2);
+  if(trees){
   calculateTpcEventPlanes(picoDst);
   mRunId_T   = picoEvent->runId();
   mEventId_T = picoEvent->eventId();
   mCent9_T   = mCent;
   mVz_T      = picoEvent->primaryVertex().z();
   mTpcEventPlaneTree->Fill();
-
+  }
   if(DEBUG) cout<<"star event QA"<<endl;
   TVector3 pVtx = picoEvent->primaryVertex();
   
@@ -1108,6 +1112,7 @@ Int_t StPicoDstarMixedMaker::Make()
 
 
       if (isTOFElectron && isTPCElectron) {
+        if(trees){
         const float E = sqrt(p*p + M_ELECTRON*M_ELECTRON); 
         mE_T          = E;
         mPt_T         = mom.Perp();
@@ -1116,7 +1121,7 @@ Int_t StPicoDstarMixedMaker::Make()
         mCharge_T     = trk->charge();
         mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
         mElectronCandidateTree->Fill();
-
+        }
 
         if(QA)hnEvsEtavsVz->Fill(mom.Eta(),mVz); 
         if(QA)hnEvsPhivsVz->Fill(mom.Phi(),mVz);
@@ -1179,6 +1184,7 @@ Int_t StPicoDstarMixedMaker::Make()
        trk->gPt() > anaCuts::GPt_D) //some cuts for eff
       {
         if(isTofPion && isTpcPion){
+          if(trees){
           float E = 0;
 
           if(trk->charge()>0)
@@ -1199,9 +1205,10 @@ Int_t StPicoDstarMixedMaker::Make()
           mVertexY_T = pVtx.y();
           mVertexZ_T = pVtx.z();
           mPionCandidateTree->Fill();
-
+          }
         }
         if(isTofKaon && isTpcKaon){
+          if(trees){
           float E = 0;
           
           if(trk->charge()>0)
@@ -1222,6 +1229,7 @@ Int_t StPicoDstarMixedMaker::Make()
           mVertexY_T = pVtx.y();
           mVertexZ_T = pVtx.z();
           mKaonCandidateTree->Fill();
+          }
         }
       }
 

@@ -56,7 +56,8 @@ namespace anaCuts
    float const qaTpcPion=4;
 
    //cut
-   float const vz = 50.0;// < cm.
+   float const vz = 100.0;// < cm.
+   float const vz_D = 50.0;// < cm.
    float const Verror = 1.0e-5; //
    float const Vr = 2.0; //cm
    //float const vzVpdVz = 3; //cm
@@ -69,6 +70,7 @@ namespace anaCuts
    int const NHitsFit2Poss = 0.51;
    float const Dca = 3;// < cm
    float const Eta = 1.5;
+   float const Eta_D = 1;
    float const TofPion=4;
    float const TpcPion=4;
 }

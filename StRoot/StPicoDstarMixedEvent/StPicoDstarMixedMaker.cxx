@@ -1174,50 +1174,53 @@ Int_t StPicoDstarMixedMaker::Make()
       }
          //current_nE++;
       }
-      if(isTofPion && isTpcPion){
-        float E = 0;
+      if(abs(pVtx.z())<anaCuts::vz_D && abs(mom.Eta())<anaCuts::Eta_D)
+      {
+        if(isTofPion && isTpcPion){
+          float E = 0;
 
-        if(trk->charge()>0)
-          {E = sqrt(p*p + M_PION_PLUS*M_PION_PLUS);}
-        else if(trk->charge()<0)
-          {E = sqrt(p*p + M_PION_MINUS*M_PION_MINUS);}
-        else
-          {E = sqrt(p*p + M_PION_0*M_PION_0);}
+          if(trk->charge()>0)
+            {E = sqrt(p*p + M_PION_PLUS*M_PION_PLUS);}
+          else if(trk->charge()<0)
+            {E = sqrt(p*p + M_PION_MINUS*M_PION_MINUS);}
+          else
+            {E = sqrt(p*p + M_PION_0*M_PION_0);}
 
-        mE_T      = E;
-        mPt_T     = mom.Perp();
-        mEta_T    = mom.Eta();
-        mPhi_T    = mom.Phi();
-        mCharge_T     = trk->charge();
-        mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
-        mBField_T  = bField;
-        mVertexX_T = pVtx.x();
-        mVertexY_T = pVtx.y();
-        mVertexZ_T = pVtx.z();
-        mPionCandidateTree->Fill();
+          mE_T      = E;
+          mPt_T     = mom.Perp();
+          mEta_T    = mom.Eta();
+          mPhi_T    = mom.Phi();
+          mCharge_T     = trk->charge();
+          mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
+          mBField_T  = bField;
+          mVertexX_T = pVtx.x();
+          mVertexY_T = pVtx.y();
+          mVertexZ_T = pVtx.z();
+          mPionCandidateTree->Fill();
 
-      }
-      if(isTofKaon && isTpcKaon){
-        float E = 0;
-        
-        if(trk->charge()>0)
-          {E = sqrt(p*p + M_KAON_PLUS*M_KAON_PLUS);}
-        else if(trk->charge()<0)
-          {E = sqrt(p*p + M_KAON_MINUS*M_KAON_MINUS);}
-        else
-          {E = sqrt(p*p + M_KAON_0_SHORT*M_KAON_0_SHORT);}
+        }
+        if(isTofKaon && isTpcKaon){
+          float E = 0;
+          
+          if(trk->charge()>0)
+            {E = sqrt(p*p + M_KAON_PLUS*M_KAON_PLUS);}
+          else if(trk->charge()<0)
+            {E = sqrt(p*p + M_KAON_MINUS*M_KAON_MINUS);}
+          else
+            {E = sqrt(p*p + M_KAON_0_SHORT*M_KAON_0_SHORT);}
 
-        mE_T      = E;
-        mPt_T     = mom.Perp();
-        mEta_T    = mom.Eta();
-        mPhi_T    = mom.Phi();
-        mCharge_T     = trk->charge();
-        mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
-        mBField_T  = bField;
-        mVertexX_T = pVtx.x();
-        mVertexY_T = pVtx.y();
-        mVertexZ_T = pVtx.z();
-        mKaonCandidateTree->Fill();
+          mE_T      = E;
+          mPt_T     = mom.Perp();
+          mEta_T    = mom.Eta();
+          mPhi_T    = mom.Phi();
+          mCharge_T     = trk->charge();
+          mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
+          mBField_T  = bField;
+          mVertexX_T = pVtx.x();
+          mVertexY_T = pVtx.y();
+          mVertexZ_T = pVtx.z();
+          mKaonCandidateTree->Fill();
+        }
       }
 
       if (tofmatch) {

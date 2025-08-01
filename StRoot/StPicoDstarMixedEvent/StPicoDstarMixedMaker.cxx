@@ -1193,7 +1193,6 @@ Int_t StPicoDstarMixedMaker::Make()
           {E = sqrt(p*p + M_KAON_0_SHORT*M_KAON_0_SHORT);}
       }
     }
-    makeD0(kaonIndices,pionIndices,picoDst); /////////////////////////////////////////////////////////////
 
       if (tofmatch) {
         ntofhits++;
@@ -1283,6 +1282,9 @@ Int_t StPicoDstarMixedMaker::Make()
       if(QA)hdEdx->Fill(mom.Mag()*trk->charge(),trk->dEdx());
       if(QA)h_mTpc->Fill(mom.Mag()*trk->charge(),pow(mom.Mag()*sqrt(1-beta*beta)*1.0/beta,2));
     }
+
+    makeD0(kaonIndices,pionIndices,picoDst); /////////////////////////////////////////////////////////////
+
     if(QA)hnTofHitvsRef->Fill(ntofhits,picoEvent->refMult());
     
 

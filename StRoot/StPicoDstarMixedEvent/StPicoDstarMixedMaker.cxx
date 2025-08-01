@@ -366,18 +366,16 @@ void StPicoDstarMixedMaker::initHists(){
     mTpcEventPlaneTree->Branch("psi2_NegEta",  &mPsi2_NegEta_T,   "psi2_NegEta/F");
     mTpcEventPlaneTree->Branch("psi2_RandA",   &mPsi2_RandA_T,    "psi2_RandA/F");
     mTpcEventPlaneTree->Branch("psi2_RandB",   &mPsi2_RandB_T,    "psi2_RandB/F");
-
-
-    mElectronCandidateTree = new TTree("ElectronCandidateTree", "Electron and Positron Candidates");
-    mElectronCandidateTree->Branch("runId",    &mRunId_T,       "runId/I"); 
-    mElectronCandidateTree->Branch("eventId",  &mEventId_T,     "eventId/I");
-    mElectronCandidateTree->Branch("cent9",    &mCent9_T,       "cent9/I");
-    mElectronCandidateTree->Branch("pt",       &mPt_T,          "pt/F");
-    mElectronCandidateTree->Branch("eta",      &mEta_T,         "eta/F");
-    mElectronCandidateTree->Branch("phi",      &mPhi_T,         "phi/F");
-    mElectronCandidateTree->Branch("E",        &mE_T,           "E/F");
-    mElectronCandidateTree->Branch("charge",   &mCharge_T,      "charge/S");
-    mElectronCandidateTree->Branch("dca",      &mDca_T,         "dca/F");
+    
+    mJpsiCandidateTree = new TTree("JpsiCandidateTree", "J/psi -> e+e- Candidates");
+    mJpsiCandidateTree->Branch("runId",    &mRunId_T,     "runId/I");
+    mJpsiCandidateTree->Branch("eventId",  &mEventId_T,   "eventId/I");
+    mJpsiCandidateTree->Branch("cent9",    &mCent9_T,     "cent9/I");
+    mJpsiCandidateTree->Branch("mass",     &mJpsi_mass_T, "mass/F");
+    mJpsiCandidateTree->Branch("pt",       &mJpsi_pt_T,   "pt/F");
+    mJpsiCandidateTree->Branch("eta",      &mJpsi_eta_T,  "eta/F");
+    mJpsiCandidateTree->Branch("phi",      &mJpsi_phi_T,  "phi/F");
+    mJpsiCandidateTree->Branch("pairType", &mJpsi_pair_type_T, "pairType/S"); // 1 for e+e-, 2 for e+e+, -2 for e-e-
 
     mD0CandidateTree = new TTree("D0CandidateTree", "Topologically Selected D0 Candidates");
     mD0CandidateTree->Branch("runId",         &mRunId_T,        "runId/I");
@@ -615,7 +613,7 @@ mFile->cd();
   }
   if(trees){
   mTpcEventPlaneTree->Write();
-  mElectronCandidateTree->Write();
+  mJpsiCandidateTree->Write();
   mD0CandidateTree->Write();
   }
   mFile->Close();
@@ -939,6 +937,8 @@ Int_t StPicoDstarMixedMaker::Make()
   positroninfo.clear();  
   std::vector<unsigned int> kaonIndices;
   std::vector<unsigned int> pionIndices;
+  std::vector<unsigned int> positronIndices;
+  std::vector<unsigned int> electronIndices;
   int nTracks = picoDst->numberOfTracks();
     for (int itrack=0;itrack<nTracks;itrack++){
       StPicoTrack* trk = picoDst->track(itrack);
@@ -1097,16 +1097,9 @@ Int_t StPicoDstarMixedMaker::Make()
 
 
       if (isTOFElectron && isTPCElectron) {
-        if(trees){
-        const float E = sqrt(p*p + M_ELECTRON*M_ELECTRON); 
-        mE_T          = E;
-        mPt_T         = mom.Perp();
-        mEta_T        = mom.Eta();
-        mPhi_T        = mom.Phi();
-        mCharge_T     = trk->charge();
-        mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
-        mElectronCandidateTree->Fill();
-        }
+
+        if (trk->charge() > 0) positronIndices.push_back(itrack);
+        else electronIndices.push_back(itrack);
 
         if(QA)hnEvsEtavsVz->Fill(mom.Eta(),mVz); 
         if(QA)hnEvsPhivsVz->Fill(mom.Phi(),mVz);
@@ -1283,7 +1276,10 @@ Int_t StPicoDstarMixedMaker::Make()
       if(QA)h_mTpc->Fill(mom.Mag()*trk->charge(),pow(mom.Mag()*sqrt(1-beta*beta)*1.0/beta,2));
     }
 
-    makeD0(kaonIndices,pionIndices,picoDst); /////////////////////////////////////////////////////////////
+    ////////////////////////////////////////////////////////////////////////
+    makeD0(kaonIndices,pionIndices,picoDst);
+    makeJpsi(electronIndices,positronIndices,picoDst);
+    ////////////////////////////////////////////////////////////////////////
 
     if(QA)hnTofHitvsRef->Fill(ntofhits,picoEvent->refMult());
     
@@ -1594,7 +1590,7 @@ void StPicoDstarMixedMaker::makeD0(std::vector<unsigned int> kaonIndices,
                             kaonPion.perpDcaToVtx()       < 0.0061 &&   // cm
                             kaonPion.kaonDca()            > 0.0060 &&        // cm
                             kaonPion.pionDca()            > 0.0060 &&        // cm
-                            cos(kaonPion.pointingAngle()) > 0.98; // Pointing angle cut
+                            cos(kaonPion.pointingAngle()) > 0.99; // Pointing angle cut
 
 */
 
@@ -1614,4 +1610,75 @@ void StPicoDstarMixedMaker::makeD0(std::vector<unsigned int> kaonIndices,
       }
     }
   }
+}
+void StPicoDstarMixedMaker::makeJpsi(std::vector<unsigned int> electronIndices,
+                                     std::vector<unsigned int> positronIndices,
+                                     StPicoDst const* picoDst)
+{
+    TVector3 pVtx = picoDst->event()->primaryVertex();
+    float bField = picoDst->event()->bField();
+
+    // e+e- pairs
+    for (size_t iPos = 0; iPos < positronIndices.size(); ++iPos) {
+        StPicoTrack* positron = picoDst->track(positronIndices[iPos]);
+        for (size_t iEle = 0; iEle < electronIndices.size(); ++iEle) {
+            StPicoTrack* electron = picoDst->track(electronIndices[iEle]);
+
+            TLorentzVector p4_positron, p4_electron, p4_jpsi;
+            p4_positron.SetVectM(positron->pMom(), M_ELECTRON);
+            p4_electron.SetVectM(electron->pMom(), M_ELECTRON);
+            p4_jpsi = p4_positron + p4_electron;
+
+            if (p4_jpsi.M() > 2.0 && p4_jpsi.M() < 4.0) {
+                mJpsi_mass_T = p4_jpsi.M();
+                mJpsi_pt_T   = p4_jpsi.Pt();
+                mJpsi_eta_T  = p4_jpsi.Eta();
+                mJpsi_phi_T  = p4_jpsi.Phi();
+                mJpsi_pair_type_T = 1; 
+                mJpsiCandidateTree->Fill();
+            }
+        }
+    }
+    // e+e+ pairs
+    for (size_t iPos1 = 0; iPos1 < positronIndices.size(); ++iPos1) {
+        for (size_t iPos2 = iPos1 + 1; iPos2 < positronIndices.size(); ++iPos2) {
+            StPicoTrack* positron1 = picoDst->track(positronIndices[iPos1]);
+            StPicoTrack* positron2 = picoDst->track(positronIndices[iPos2]);
+            
+            TLorentzVector p4_p1, p4_p2, p4_pair;
+            p4_p1.SetVectM(positron1->pMom(), M_ELECTRON);
+            p4_p2.SetVectM(positron2->pMom(), M_ELECTRON);
+            p4_pair = p4_p1 + p4_p2;
+
+            if (p4_pair.M() > 2.0 && p4_pair.M() < 4.0) {
+                mJpsi_mass_T = p4_pair.M();
+                mJpsi_pt_T   = p4_pair.Pt();
+                mJpsi_eta_T  = p4_pair.Eta();
+                mJpsi_phi_T  = p4_pair.Phi();
+                mJpsi_pair_type_T = 2; // Like-sign e+e+
+                mJpsiCandidateTree->Fill();
+            }
+        }
+    }
+    // e-e- pairs
+    for (size_t iEle1 = 0; iEle1 < electronIndices.size(); ++iEle1) {
+        for (size_t iEle2 = iEle1 + 1; iEle2 < electronIndices.size(); ++iEle2) {
+            StPicoTrack* electron1 = picoDst->track(electronIndices[iEle1]);
+            StPicoTrack* electron2 = picoDst->track(electronIndices[iEle2]);
+            
+            TLorentzVector p4_p1, p4_p2, p4_pair;
+            p4_p1.SetVectM(electron1->pMom(), M_ELECTRON);
+            p4_p2.SetVectM(electron2->pMom(), M_ELECTRON);
+            p4_pair = p4_p1 + p4_p2;
+
+            if (p4_pair.M() > 2.0 && p4_pair.M() < 4.0) {
+                mJpsi_mass_T = p4_pair.M();
+                mJpsi_pt_T   = p4_pair.Pt();
+                mJpsi_eta_T  = p4_pair.Eta();
+                mJpsi_phi_T  = p4_pair.Phi();
+                mJpsi_pair_type_T = -2; // Like-sign e-e-
+                mJpsiCandidateTree->Fill();
+            }
+        }
+    }
 }

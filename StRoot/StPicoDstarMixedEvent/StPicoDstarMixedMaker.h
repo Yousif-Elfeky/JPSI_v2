@@ -346,8 +346,8 @@ class StPicoDstarMixedMaker : public StMaker
     THnSparseF* hJpsi_v2_LSnn; // Like-sign e-e-
 
     TTree* mTpcEventPlaneTree;
-    TTree* mElectronCandidateTree;
     TTree* mD0CandidateTree;
+    TTree* mJpsiCandidateTree;
     // Event-level information
     int   mRunId_T;
     int   mEventId_T;
@@ -371,21 +371,24 @@ class StPicoDstarMixedMaker : public StMaker
     float mPsi2_RandA_T;
     float mPsi2_RandB_T;
 
-    short             mCharge_T;
-    float           mDca_T;
+    short mCharge_T;
+    float mDca_T;
     float mPt_T, mEta_T, mPhi_T, mE_T;
-    float mD0_mass_T;
-    float mD0_pt_T;
-    float mD0_eta_T;
-    float mD0_phi_T;
-    float mD0_decayLength_T;
-    float mD0_pointingAngle_T;
+
+    float mD0_mass_T, mD0_pt_T, mD0_eta_T, mD0_phi_T, 
+          mD0_decayLength_T, mD0_pointingAngle_T;
     short mD0_pair_type_T;
+
+    float mJpsi_mass_T, mJpsi_pt_T, mJpsi_eta_T, mJpsi_phi_T;
+    short mJpsi_pair_type_T;
 
     void  calculateTpcEventPlanes(StPicoDst const* picoDst);
     void  makeD0(std::vector<unsigned int> kaonIndices, 
                  std::vector<unsigned int> pionIndices, 
                  StPicoDst const* picoDst);
+    void  makeJpsi(std::vector<unsigned int> electronIndices,
+                   std::vector<unsigned int> positronIndices,
+                   StPicoDst const* picoDst);
     bool  isGoodEventPlaneTrack(StPicoTrack const* trk) const;
 
     ClassDef(StPicoDstarMixedMaker, 1)

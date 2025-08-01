@@ -386,7 +386,11 @@ void StPicoDstarMixedMaker::initHists(){
     mPionCandidateTree->Branch("E",        &mE_T,           "E/F");
     mPionCandidateTree->Branch("charge",   &mCharge_T,      "charge/S");
     mPionCandidateTree->Branch("dca",      &mDca_T,         "dca/F");
-    
+    mPionCandidateTree->Branch("bField",   &mBField_T,      "bField/F");
+    mPionCandidateTree->Branch("vertexX",  &mVertexX_T,     "vertexX/F");
+    mPionCandidateTree->Branch("vertexY",  &mVertexY_T,     "vertexY/F");
+    mPionCandidateTree->Branch("vertexZ",  &mVertexZ_T,     "vertexZ/F");    
+
     mKaonCandidateTree = new TTree("KaonCandidateTree", "Kion Plus Minus Candidates");
     mKaonCandidateTree->Branch("runId",    &mRunId_T,       "runId/I"); 
     mKaonCandidateTree->Branch("eventId",  &mEventId_T,     "eventId/I");
@@ -397,6 +401,10 @@ void StPicoDstarMixedMaker::initHists(){
     mKaonCandidateTree->Branch("E",        &mE_T,           "E/F");
     mKaonCandidateTree->Branch("charge",   &mCharge_T,      "charge/S");
     mKaonCandidateTree->Branch("dca",      &mDca_T,         "dca/F");
+    mKaonCandidateTree->Branch("bField",   &mBField_T,      "bField/F");
+    mKaonCandidateTree->Branch("vertexX",  &mVertexX_T,     "vertexX/F");
+    mKaonCandidateTree->Branch("vertexY",  &mVertexY_T,     "vertexY/F");
+    mKaonCandidateTree->Branch("vertexZ",  &mVertexZ_T,     "vertexZ/F");
 
   //tof module id
   /*ModuleId_1 = new TH1F("ModuleId 1","0.8<1/#beta<0.9 0.4<P;ModuleId",40,0,40);
@@ -670,6 +678,7 @@ Int_t StPicoDstarMixedMaker::Make()
   //if(mRunId < 22043001) return 0;// form 20210212
 
     TVector3 pVtx = picoEvent->primaryVertex();
+    float bField = picoEvent->bField();
   if (mRunbyRunQA && isGoodQaEvent(picoEvent) ){ 
     //primary vertex
     // StThreeVectorF pVtx = picoEvent->primaryVertex();
@@ -717,6 +726,7 @@ Int_t StPicoDstarMixedMaker::Make()
       if (!(fabs(trk->gDCA(pVtx.x(),pVtx.y(),pVtx.z()))<anaCuts::qaDca)) continue;
       bool isprimary = trk->isPrimary();
       double ptot = trk->gMom(pVtx, picoEvent->bField()).Mag();
+      
       float beta = getTofBeta(trk);
       bool tofmatch =( beta!=std::numeric_limits<float>::quiet_NaN() )&& beta>0;
       bool tofQaPion = false;
@@ -1180,6 +1190,10 @@ Int_t StPicoDstarMixedMaker::Make()
         mPhi_T    = mom.Phi();
         mCharge_T     = trk->charge();
         mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
+        mBField_T  = bField;
+        mVertexX_T = pVtx.x();
+        mVertexY_T = pVtx.y();
+        mVertexZ_T = pVtx.z();
         mPionCandidateTree->Fill();
 
       }
@@ -1199,6 +1213,10 @@ Int_t StPicoDstarMixedMaker::Make()
         mPhi_T    = mom.Phi();
         mCharge_T     = trk->charge();
         mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
+        mBField_T  = bField;
+        mVertexX_T = pVtx.x();
+        mVertexY_T = pVtx.y();
+        mVertexZ_T = pVtx.z();
         mKaonCandidateTree->Fill();
       }
 

@@ -56,15 +56,15 @@ namespace anaCuts
    float const qaTpcPion=4;
 
    //cut
-   float const vz = 100.0;// < cm.
+   float const vz = 50.0;// < cm.
    float const Verror = 1.0e-5; //
    float const Vr = 2.0; //cm
    //float const vzVpdVz = 3; //cm
    float const vzVpdVz = 6; //cm
 
    // QA tracks cuts
-   float const GPt = 0.2;
-   int const NHitsFit = 15;
+   float const GPt = 0.5;
+   int const NHitsFit = 20;
    int const NHitsDedx = 5;
    int const NHitsFit2Poss = 0.51;
    float const Dca = 3;// < cm

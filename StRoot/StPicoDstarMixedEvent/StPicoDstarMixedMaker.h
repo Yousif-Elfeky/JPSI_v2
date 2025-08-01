@@ -375,8 +375,8 @@ class StPicoDstarMixedMaker : public StMaker
     short             mCharge_T;
     float           mDca_T;
     float mPt_T, mEta_T, mPhi_T, mE_T;
-    
-    // --- Private member functions ---
+    float mBField_T, mVertexX_T, mVertexY_T, mVertexZ_T;
+
     void  calculateTpcEventPlanes(StPicoDst const* picoDst);
     bool  isGoodEventPlaneTrack(StPicoTrack const* trk) const;
 

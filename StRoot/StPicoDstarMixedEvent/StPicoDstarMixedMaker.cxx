@@ -42,7 +42,7 @@
 #include "StRefMultCorr/StRefMultCorr.h"
 #include "StRefMultCorr/CentralityMaker.h"
 
-bool histos =false;
+bool histos =true;
 bool trees =false;
 bool DEBUG = false;
 

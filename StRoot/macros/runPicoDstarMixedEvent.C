@@ -20,6 +20,7 @@ void runPicoDstarMixedEvent(TString picolist="input.list", std::string  runlist=
   gSystem->Load("StPicoEvent");
   gSystem->Load("StRefMultCorr");
   gSystem->Load("StPicoDstMaker");
+  gSystem->Load("StPicoCharmContainers");
   gSystem->Load("StPicoDstarMixedEvent");
 
   chain = new StChain();

@@ -380,16 +380,16 @@ void StPicoDstarMixedMaker::initHists(){
     mElectronCandidateTree->Branch("dca",      &mDca_T,         "dca/F");
 
     mD0CandidateTree = new TTree("D0CandidateTree", "Topologically Selected D0 Candidates");
-    mD0CandidateTree->Branch("runId",    &mRunId_T,     "runId/I");
-    mD0CandidateTree->Branch("eventId",  &mEventId_T,   "eventId/I");
-    mD0CandidateTree->Branch("cent9",    &mCent9_T,     "cent9/I");
-    mD0CandidateTree->Branch("mass",     &mD0_mass_T,   "mass/F");
-    mD0CandidateTree->Branch("pt",       &mD0_pt_T,     "pt/F");
-    mD0CandidateTree->Branch("eta",      &mD0_eta_T,    "eta/F");
-    mD0CandidateTree->Branch("phi",      &mD0_phi_T,    "phi/F");
-    mD0CandidateTree->Branch("decayLength", &mD0_decayLength_T, "decayLength/F");
+    mD0CandidateTree->Branch("runId",         &mRunId_T,        "runId/I");
+    mD0CandidateTree->Branch("eventId",       &mEventId_T,      "eventId/I");
+    mD0CandidateTree->Branch("cent9",         &mCent9_T,        "cent9/I");
+    mD0CandidateTree->Branch("mass",          &mD0_mass_T,      "mass/F");
+    mD0CandidateTree->Branch("pt",            &mD0_pt_T,        "pt/F");
+    mD0CandidateTree->Branch("eta",           &mD0_eta_T,       "eta/F");
+    mD0CandidateTree->Branch("phi",           &mD0_phi_T,       "phi/F");
+    mD0CandidateTree->Branch("decayLength",   &mD0_decayLength_T, "decayLength/F");
     mD0CandidateTree->Branch("pointingAngle", &mD0_pointingAngle_T, "pointingAngle/F");
-    mD0CandidateTree->Branch("pairType", &mD0_pair_type_T, "pairType/S");
+    mD0CandidateTree->Branch("pairType",      &mD0_pair_type_T, "pairType/S");
 
   }
   //tof module id
@@ -1580,13 +1580,23 @@ void StPicoDstarMixedMaker::makeD0(std::vector<unsigned int> kaonIndices,
 
         StKaonPion kaonPion(*kaon, *pion, pVtx, bField);
 
-        /* Topocuts https://arxiv.org/abs/1905.02052 analysis note */
-        bool passTopoCuts = kaonPion.decayLength() > 0.0145 &&    // cm 
-                            kaonPion.dcaDaughters() < 0.0084 &&   // cm
-                            kaonPion.perpDcaToVtx() < 0.0061 &&   // cm
-                            kaonPion.kaonDca() > 0.0060 &&        // cm
-                            kaonPion.pionDca() > 0.0060 &&        // cm
+        
+        bool passTopoCuts = kaonPion.decayLength()        > 0.0125 &&    // cm 
+                            kaonPion.dcaDaughters()       < 0.0104 &&   // cm
+                            kaonPion.perpDcaToVtx()       < 0.0081 &&   // cm
+                            kaonPion.kaonDca()            > 0.0040 &&        // cm
+                            kaonPion.pionDca()            > 0.0040 &&        // cm
                             cos(kaonPion.pointingAngle()) > 0.98; // Pointing angle cut
+
+/* Tight cuts from https://arxiv.org/abs/1905.02052 analysis note 
+        bool passTopoCuts = kaonPion.decayLength()        > 0.0145 &&    // cm 
+                            kaonPion.dcaDaughters()       < 0.0084 &&   // cm
+                            kaonPion.perpDcaToVtx()       < 0.0061 &&   // cm
+                            kaonPion.kaonDca()            > 0.0060 &&        // cm
+                            kaonPion.pionDca()            > 0.0060 &&        // cm
+                            cos(kaonPion.pointingAngle()) > 0.98; // Pointing angle cut
+
+*/
 
         if (passTopoCuts) {
           mD0_mass_T          = kaonPion.m();

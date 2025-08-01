@@ -893,8 +893,8 @@ Int_t StPicoDstarMixedMaker::Make()
   // if(mRunId < 22106001) return 0;   
     //refmultCorrUtil = new StRefMultCorr("refmult","Isobar");
     StRefMultCorr *refmultCorrUtil = CentralityMaker::instance()->getRefMultCorr();
-    // refmultCorrUtil -> init(mRunId);
-    refmultCorrUtil->initEvent(picoEvent->refMult(), picoEvent->primaryVertex().z(), picoEvent->ZDCx());
+    refmultCorrUtil -> init(mRunId);
+    refmultCorrUtil->initEvent(picoEvent->refMult(),mVz,picoEvent->ZDCx());
     Bool_t isBadRun_Cen = refmultCorrUtil->isBadRun(mRunId);
     Bool_t isPileUpEvt_Cen = !refmultCorrUtil->passnTofMatchRefmultCut(picoEvent->refMult()*1.0,picoEvent->nBTOFMatch()*1.0);
     mCent  = refmultCorrUtil->getCentralityBin9();

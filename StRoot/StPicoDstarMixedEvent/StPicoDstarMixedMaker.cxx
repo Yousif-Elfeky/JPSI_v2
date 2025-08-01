@@ -1109,10 +1109,10 @@ Int_t StPicoDstarMixedMaker::Make()
 
       if (isTOFElectron && isTPCElectron) {
         const float E = sqrt(p*p + M_ELECTRON*M_ELECTRON); 
-        mE_T      = E;
-        mPt_T     = mom.Perp();
-        mEta_T    = mom.Eta();
-        mPhi_T    = mom.Phi();
+        mE_T          = E;
+        mPt_T         = mom.Perp();
+        mEta_T        = mom.Eta();
+        mPhi_T        = mom.Phi();
         mCharge_T     = trk->charge();
         mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
         mElectronCandidateTree->Fill();
@@ -1174,7 +1174,9 @@ Int_t StPicoDstarMixedMaker::Make()
       }
          //current_nE++;
       }
-      if(abs(pVtx.z())<anaCuts::vz_D && abs(mom.Eta())<anaCuts::Eta_D)
+      if(abs(pVtx.z())<anaCuts::vz_D &&
+       abs(mom.Eta())<anaCuts::Eta_D &&
+       trk->gPt() > anaCuts::GPt_D) //some cuts for eff
       {
         if(isTofPion && isTpcPion){
           float E = 0;

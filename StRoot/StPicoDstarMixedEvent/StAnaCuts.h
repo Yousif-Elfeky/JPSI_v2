@@ -64,7 +64,8 @@ namespace anaCuts
    float const vzVpdVz = 6; //cm
 
    // QA tracks cuts
-   float const GPt = 0.5;
+   float const GPt = 0.2;
+   float const GPt_D = 0.5;
    int const NHitsFit = 20;
    int const NHitsDedx = 5;
    int const NHitsFit2Poss = 0.51;

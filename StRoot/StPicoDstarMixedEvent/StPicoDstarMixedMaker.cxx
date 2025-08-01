@@ -306,12 +306,12 @@ void StPicoDstarMixedMaker::initHists(){
   if(histos){
   //invariant mass electron
   //hMeeCount = new TH1F("hMee","hMee;Count;Mee(GeV/c^{2})",400,0,4);
-  hMeeCount = new TH1F("hMee","hMee;Mee(GeV/c^{2})",40000,0,4);
-  hMeeCount_like1 = new TH1F("hMee_like1","hMee like sign electron;Mee(GeV/c^{2})",40000,0,4);
-  hMeeCount_like2 = new TH1F("hMee_like2","hMee like sign positron;Mee(GeV/c^{2})",40000,0,4);
-  hMeeCountPt = new TH2F("hMeePt","hMee vs p_{T};Mee(GeV/c^{2});p_{T}",40000,0,4,200,0,10);
-  hMeeCountPt_like1 = new TH2F("hMeePt_like1","hMee vs p_{T} like sign electron;Mee(GeV/c^{2});p_{T}",40000,0,4,200,0,10);
-  hMeeCountPt_like2 = new TH2F("hMeePt_like2","hMee vs p_{T} like sign positron;Mee(GeV/c^{2});p_{T}",40000,0,4,200,0,10);
+  hMeeCount = new TH1F("hMee","hMee;Mee(GeV/c^{2})",400,0,4);
+  hMeeCount_like1 = new TH1F("hMee_like1","hMee like sign electron;Mee(GeV/c^{2})",400,0,4);
+  hMeeCount_like2 = new TH1F("hMee_like2","hMee like sign positron;Mee(GeV/c^{2})",400,0,4);
+  hMeeCountPt = new TH2F("hMeePt","hMee vs p_{T};Mee(GeV/c^{2});p_{T}",400,0,4,200,0,10);
+  hMeeCountPt_like1 = new TH2F("hMeePt_like1","hMee vs p_{T} like sign electron;Mee(GeV/c^{2});p_{T}",400,0,4,200,0,10);
+  hMeeCountPt_like2 = new TH2F("hMeePt_like2","hMee vs p_{T} like sign positron;Mee(GeV/c^{2});p_{T}",400,0,4,200,0,10);
 
     hCentrality = new TH1F("hCentrality", "Centrality Distribution (weighted)", 9, -0.5, 8.5);
     hCentrality_noWgt = new TH1F("hCentrality_noWgt", "Centrality Distribution (no weight)", 9, -0.5, 8.5);
@@ -327,7 +327,7 @@ void StPicoDstarMixedMaker::initHists(){
     const int nDimensions = 4;
     
     // Number of bins for each dimension
-    int bins[nDimensions] = { 9, 200, 40000, 200 };
+    int bins[nDimensions] = { 9, 200, 400, 200 };
     
     // Minimum value for each dimension's axis
     double xmin[nDimensions] = { -0.5, 0.0, 0.0, 0.0 };
@@ -1350,12 +1350,12 @@ Int_t StPicoDstarMixedMaker::Make()
                     double dphi = fabs(TVector2::Phi_mpi_pi(eepair.Phi() - mEventPlaneV2[2].Phi()));
                     double point[4] = {(double)mCent, eepair.Pt(), eepair.M(), dphi};
                     double cos2dphi = cos(2 * dphi);
-                    // hJpsi_v2_LSnn->Fill(point, mWeight);
-                    // hCos2dphi_LSnn->Fill(eepair.M(), cos2dphi, mWeight);
+                    hJpsi_v2_LSnn->Fill(point, mWeight);
+                    hCos2dphi_LSnn->Fill(eepair.M(), cos2dphi, mWeight);
 
                     //if(eepair.Perp()<0.2){hMeeCount_like1->Fill(eepair.M());}
-                    // hMeeCount_like1->Fill(eepair.M());
-                    // hMeeCountPt_like1->Fill(eepair.M(),eepair.Perp());
+                    hMeeCount_like1->Fill(eepair.M());
+                    hMeeCountPt_like1->Fill(eepair.M(),eepair.Perp());
 //                    cout<<"debug03"<<endl;
                     //if(eepair.Perp()<=10){hMeelike1_Pt_Cent->Fill(eepair.Perp(),mCentrality,eepair.M());}
                   }
@@ -1376,13 +1376,13 @@ Int_t StPicoDstarMixedMaker::Make()
                     eepair = particle1_4V + particle2_4V;
                     double dphi = fabs(TVector2::Phi_mpi_pi(eepair.Phi() - mEventPlaneV2[2].Phi()));
                     double point[4] = {(double)mCent, eepair.Pt(), eepair.M(), dphi};
-                    // double cos2dphi = cos(2 * dphi);
-                    // hJpsi_v2_LSpp->Fill(point, mWeight);
-                    // hCos2dphi_LSpp->Fill(eepair.M(), cos2dphi, mWeight);
+                    double cos2dphi = cos(2 * dphi);
+                    hJpsi_v2_LSpp->Fill(point, mWeight);
+                    hCos2dphi_LSpp->Fill(eepair.M(), cos2dphi, mWeight);
 
                     //if(eepair.Perp()<0.2){hMeeCount_like2->Fill(eepair.M());}
-                    // hMeeCount_like2->Fill(eepair.M());
-                    // hMeeCountPt_like2->Fill(eepair.M(),eepair.Perp());
+                    hMeeCount_like2->Fill(eepair.M());
+                    hMeeCountPt_like2->Fill(eepair.M(),eepair.Perp());
                     //if(eepair.Perp()<=10){hMeelike2_Pt_Cent->Fill(eepair.Perp(),mCentrality,eepair.M());}
                   }
          }
@@ -1402,12 +1402,12 @@ Int_t StPicoDstarMixedMaker::Make()
                     double dphi = fabs(TVector2::Phi_mpi_pi(eepair.Phi() - mEventPlaneV2[2].Phi()));
                     double point[4] = {(double)mCent, eepair.Pt(), eepair.M(), dphi};
                     double cos2dphi = cos(2 * dphi);
-                    // hJpsi_v2_UL->Fill(point, mWeight);
-                    // hCos2dphi_UL->Fill(eepair.M(), cos2dphi, mWeight);
+                    hJpsi_v2_UL->Fill(point, mWeight);
+                    hCos2dphi_UL->Fill(eepair.M(), cos2dphi, mWeight);
 
                     //if(eepair.Perp()<0.2){hMeeCount->Fill(eepair.M());}
-                    // hMeeCount->Fill(eepair.M());
-                    // hMeeCountPt->Fill(eepair.M(),eepair.Perp());
+                    hMeeCount->Fill(eepair.M());
+                    hMeeCountPt->Fill(eepair.M(),eepair.Perp());
                     //if(eepair.Perp()<=10){hMee_Pt_Cent->Fill(eepair.Perp(),mCentrality,eepair.M());}
                   }
          }

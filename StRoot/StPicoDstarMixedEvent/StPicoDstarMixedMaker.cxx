@@ -38,6 +38,7 @@
 #include "TVector3.h"
 #include "THnSparse.h"
 #include "TRandom.h"
+#include "StPicoCharmContainers/StKaonPion.h"
 
 #include "StRefMultCorr/StRefMultCorr.h"
 #include "StRefMultCorr/CentralityMaker.h"
@@ -378,36 +379,19 @@ void StPicoDstarMixedMaker::initHists(){
     mElectronCandidateTree->Branch("charge",   &mCharge_T,      "charge/S");
     mElectronCandidateTree->Branch("dca",      &mDca_T,         "dca/F");
 
-    mPionCandidateTree = new TTree("PionCandidateTree", "Pion Plus Minus Candidates");
-    mPionCandidateTree->Branch("runId",    &mRunId_T,       "runId/I"); 
-    mPionCandidateTree->Branch("eventId",  &mEventId_T,     "eventId/I");
-    mPionCandidateTree->Branch("cent9",    &mCent9_T,       "cent9/I");
-    mPionCandidateTree->Branch("pt",       &mPt_T,          "pt/F");
-    mPionCandidateTree->Branch("eta",      &mEta_T,         "eta/F");
-    mPionCandidateTree->Branch("phi",      &mPhi_T,         "phi/F");
-    mPionCandidateTree->Branch("E",        &mE_T,           "E/F");
-    mPionCandidateTree->Branch("charge",   &mCharge_T,      "charge/S");
-    mPionCandidateTree->Branch("dca",      &mDca_T,         "dca/F");
-    mPionCandidateTree->Branch("bField",   &mBField_T,      "bField/F");
-    mPionCandidateTree->Branch("vertexX",  &mVertexX_T,     "vertexX/F");
-    mPionCandidateTree->Branch("vertexY",  &mVertexY_T,     "vertexY/F");
-    mPionCandidateTree->Branch("vertexZ",  &mVertexZ_T,     "vertexZ/F");    
+    mD0CandidateTree = new TTree("D0CandidateTree", "Topologically Selected D0 Candidates");
+    mD0CandidateTree->Branch("runId",    &mRunId_T,     "runId/I");
+    mD0CandidateTree->Branch("eventId",  &mEventId_T,   "eventId/I");
+    mD0CandidateTree->Branch("cent9",    &mCent9_T,     "cent9/I");
+    mD0CandidateTree->Branch("mass",     &mD0_mass_T,   "mass/F");
+    mD0CandidateTree->Branch("pt",       &mD0_pt_T,     "pt/F");
+    mD0CandidateTree->Branch("eta",      &mD0_eta_T,    "eta/F");
+    mD0CandidateTree->Branch("phi",      &mD0_phi_T,    "phi/F");
+    mD0CandidateTree->Branch("decayLength", &mD0_decayLength_T, "decayLength/F");
+    mD0CandidateTree->Branch("pointingAngle", &mD0_pointingAngle_T, "pointingAngle/F");
+    mD0CandidateTree->Branch("pairType", &mD0_pair_type_T, "pairType/S");
 
-    mKaonCandidateTree = new TTree("KaonCandidateTree", "Kion Plus Minus Candidates");
-    mKaonCandidateTree->Branch("runId",    &mRunId_T,       "runId/I"); 
-    mKaonCandidateTree->Branch("eventId",  &mEventId_T,     "eventId/I");
-    mKaonCandidateTree->Branch("cent9",    &mCent9_T,       "cent9/I");
-    mKaonCandidateTree->Branch("pt",       &mPt_T,          "pt/F");
-    mKaonCandidateTree->Branch("eta",      &mEta_T,         "eta/F");
-    mKaonCandidateTree->Branch("phi",      &mPhi_T,         "phi/F");
-    mKaonCandidateTree->Branch("E",        &mE_T,           "E/F");
-    mKaonCandidateTree->Branch("charge",   &mCharge_T,      "charge/S");
-    mKaonCandidateTree->Branch("dca",      &mDca_T,         "dca/F");
-    mKaonCandidateTree->Branch("bField",   &mBField_T,      "bField/F");
-    mKaonCandidateTree->Branch("vertexX",  &mVertexX_T,     "vertexX/F");
-    mKaonCandidateTree->Branch("vertexY",  &mVertexY_T,     "vertexY/F");
-    mKaonCandidateTree->Branch("vertexZ",  &mVertexZ_T,     "vertexZ/F");
-    }
+  }
   //tof module id
   /*ModuleId_1 = new TH1F("ModuleId 1","0.8<1/#beta<0.9 0.4<P;ModuleId",40,0,40);
   TofId_1 = new TH1F("TofId 1","0.8<1/#beta<0.9 0.4<P;TofId",23100,0,23100);
@@ -632,8 +616,7 @@ mFile->cd();
   if(trees){
   mTpcEventPlaneTree->Write();
   mElectronCandidateTree->Write();
-  mPionCandidateTree->Write();
-  mKaonCandidateTree->Write();
+  mD0CandidateTree->Write();
   }
   mFile->Close();
 
@@ -954,6 +937,8 @@ Int_t StPicoDstarMixedMaker::Make()
   
   electroninfo.clear();
   positroninfo.clear();  
+  std::vector<unsigned int> kaonIndices;
+  std::vector<unsigned int> pionIndices;
   int nTracks = picoDst->numberOfTracks();
     for (int itrack=0;itrack<nTracks;itrack++){
       StPicoTrack* trk = picoDst->track(itrack);
@@ -1183,55 +1168,32 @@ Int_t StPicoDstarMixedMaker::Make()
        abs(mom.Eta())<anaCuts::Eta_D &&
        trk->gPt() > anaCuts::GPt_D) //some cuts for eff
       {
-        if(isTofPion && isTpcPion){
-          if(trees){
-          float E = 0;
+      if(isTofPion && isTpcPion){
+        pionIndices.push_back(itrack);
 
-          if(trk->charge()>0)
-            {E = sqrt(p*p + M_PION_PLUS*M_PION_PLUS);}
-          else if(trk->charge()<0)
-            {E = sqrt(p*p + M_PION_MINUS*M_PION_MINUS);}
-          else
-            {E = sqrt(p*p + M_PION_0*M_PION_0);}
-
-          mE_T      = E;
-          mPt_T     = mom.Perp();
-          mEta_T    = mom.Eta();
-          mPhi_T    = mom.Phi();
-          mCharge_T     = trk->charge();
-          mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
-          mBField_T  = bField;
-          mVertexX_T = pVtx.x();
-          mVertexY_T = pVtx.y();
-          mVertexZ_T = pVtx.z();
-          mPionCandidateTree->Fill();
-          }
-        }
-        if(isTofKaon && isTpcKaon){
-          if(trees){
-          float E = 0;
-          
-          if(trk->charge()>0)
-            {E = sqrt(p*p + M_KAON_PLUS*M_KAON_PLUS);}
-          else if(trk->charge()<0)
-            {E = sqrt(p*p + M_KAON_MINUS*M_KAON_MINUS);}
-          else
-            {E = sqrt(p*p + M_KAON_0_SHORT*M_KAON_0_SHORT);}
-
-          mE_T      = E;
-          mPt_T     = mom.Perp();
-          mEta_T    = mom.Eta();
-          mPhi_T    = mom.Phi();
-          mCharge_T     = trk->charge();
-          mDca_T        = trk->gDCA(picoEvent->primaryVertex()).Mag();
-          mBField_T  = bField;
-          mVertexX_T = pVtx.x();
-          mVertexY_T = pVtx.y();
-          mVertexZ_T = pVtx.z();
-          mKaonCandidateTree->Fill();
-          }
-        }
+        float E = 0;
+        if(trk->charge()>0)
+          {E = sqrt(p*p + M_PION_PLUS*M_PION_PLUS);}
+        else if(trk->charge()<0)
+          {E = sqrt(p*p + M_PION_MINUS*M_PION_MINUS);}
+        else
+          {E = sqrt(p*p + M_PION_0*M_PION_0);}
       }
+      
+      if(isTofKaon && isTpcKaon)
+      {
+        kaonIndices.push_back(itrack);
+
+        float E = 0;          
+        if(trk->charge()>0)
+          {E = sqrt(p*p + M_KAON_PLUS*M_KAON_PLUS);}
+        else if(trk->charge()<0)
+          {E = sqrt(p*p + M_KAON_MINUS*M_KAON_MINUS);}
+        else
+          {E = sqrt(p*p + M_KAON_0_SHORT*M_KAON_0_SHORT);}
+      }
+    }
+    makeD0(kaonIndices,pionIndices,picoDst); /////////////////////////////////////////////////////////////
 
       if (tofmatch) {
         ntofhits++;
@@ -1599,4 +1561,45 @@ void StPicoDstarMixedMaker::calculateTpcEventPlanes(StPicoDst const* picoDst)
     mPsi2_NegEta_T  = Q2_neg_eta.Phi() / 2.0;
     mPsi2_RandA_T   = Q2_randA.Phi()   / 2.0;
     mPsi2_RandB_T   = Q2_randB.Phi()   / 2.0;
+}
+void StPicoDstarMixedMaker::makeD0(std::vector<unsigned int> kaonIndices, 
+                                  std::vector<unsigned int> pionIndices, 
+                                  StPicoDst const* picoDst )
+{
+  TVector3 pVtx = picoDst->event()->primaryVertex();
+  float bField = picoDst->event()->bField();
+  for (size_t iK = 0; iK < kaonIndices.size(); ++iK) {
+    StPicoTrack* kaon = picoDst->track(kaonIndices[iK]);
+    for (size_t iP = 0; iP < pionIndices.size(); ++iP) {
+        StPicoTrack* pion = picoDst->track(pionIndices[iP]);
+
+        if (kaon->id() == pion->id()) continue;
+        if (kaon->charge() * pion->charge() > 0) continue;
+
+        StKaonPion kaonPion(*kaon, *pion, pVtx, bField);
+
+        /* Topocuts https://arxiv.org/abs/1905.02052 analysis note */
+        bool passTopoCuts = kaonPion.decayLength() > 0.0145 &&    // cm 
+                            kaonPion.dcaDaughters() < 0.0084 &&   // cm
+                            kaonPion.perpDcaToVtx() < 0.0061 &&   // cm
+                            kaonPion.kaonDca() > 0.0060 &&        // cm
+                            kaonPion.pionDca() > 0.0060 &&        // cm
+                            cos(kaonPion.pointingAngle()) > 0.98; // Pointing angle cut
+
+        if (passTopoCuts) {
+          mD0_mass_T          = kaonPion.m();
+          mD0_pt_T            = kaonPion.pt();
+          mD0_eta_T           = kaonPion.eta();
+          mD0_phi_T           = kaonPion.phi();
+          mD0_decayLength_T   = kaonPion.decayLength();
+          mD0_pointingAngle_T = kaonPion.pointingAngle();
+          if (kaon->charge() * pion->charge() < 0) { // Unlike-sign
+            mD0_pair_type_T = (kaon->charge() > 0) ? -1 : 1; // K+pi- or K-pi+
+          } else { // Like-sign
+                mD0_pair_type_T = (kaon->charge() > 0) ? 2 : -2; // K+pi+ or K-pi-
+          }
+          mD0CandidateTree->Fill();
+      }
+    }
+  }
 }

@@ -347,8 +347,7 @@ class StPicoDstarMixedMaker : public StMaker
 
     TTree* mTpcEventPlaneTree;
     TTree* mElectronCandidateTree;
-    TTree* mPionCandidateTree;
-    TTree* mKaonCandidateTree;
+    TTree* mD0CandidateTree;
     // Event-level information
     int   mRunId_T;
     int   mEventId_T;
@@ -375,9 +374,18 @@ class StPicoDstarMixedMaker : public StMaker
     short             mCharge_T;
     float           mDca_T;
     float mPt_T, mEta_T, mPhi_T, mE_T;
-    float mBField_T, mVertexX_T, mVertexY_T, mVertexZ_T;
+    float mD0_mass_T;
+    float mD0_pt_T;
+    float mD0_eta_T;
+    float mD0_phi_T;
+    float mD0_decayLength_T;
+    float mD0_pointingAngle_T;
+    short mD0_pair_type_T;
 
     void  calculateTpcEventPlanes(StPicoDst const* picoDst);
+    void  makeD0(std::vector<unsigned int> kaonIndices, 
+                 std::vector<unsigned int> pionIndices, 
+                 StPicoDst const* picoDst);
     bool  isGoodEventPlaneTrack(StPicoTrack const* trk) const;
 
     ClassDef(StPicoDstarMixedMaker, 1)
